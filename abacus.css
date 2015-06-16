@@ -20,6 +20,9 @@ padding:0;
 td.empty {
 background-position:center top;
 }
+td.active {
+background-color:blue;
+}
 
 tbody tr td {
 font-size:12pt;
