@@ -94,6 +94,8 @@ function addInstruct(str) {
     });
     instructObj.queue(function () {
         $(this).find('li:last').fadeIn(step, function () {
+            // unlabel all beads
+            $('thead td, tfoot td').removeClass('active');
             instructObj.dequeue();
         });
     });
@@ -114,9 +116,6 @@ plus(j, d, type) {
     var sum = a + d;
 
     if (type == "show") {
-        // unlabel all beads
-        $('thead td, tfoot td').removeClass('active');
-
         if (d < 5) {
             if (sum >= 10) addInstruct(plus3[d - 1]);
             else if (a < 5 && sum >= 5) addInstruct(plus2[d - 1]);
@@ -167,9 +166,6 @@ minus(j, d, type) {
     var diff = a - d + 10;
 
     if (type == "show") {
-        // unlabel all beads
-        $('thead td, tfoot td').removeClass('active');
-
         if (d < 5) {
             if (diff < 10) addInstruct(minus3[d - 1]);
             else if (a >= 5 && diff < 15) addInstruct(minus2[d - 1]);
@@ -234,9 +230,6 @@ times(j, a, d, type, flag_replace) {
     var prod = a * d;
 
     if (type == "show") {
-        // unlabel all beads
-        $('thead td, tfoot td').removeClass('active');
-
         if (a > d) addInstruct(times1[a - 1][d - 1]);
         else addInstruct(times1[d - 1][a - 1]);
 
@@ -396,7 +389,6 @@ function handleForm() {
     }
 
     //stage 2
-    $('thead td, tfoot td').removeClass('active');
     switch ($('form#demo select').val()) {
     case 'plus':
         //show a on the right side of abacus
