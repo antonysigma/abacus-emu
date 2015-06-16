@@ -1,8 +1,8 @@
 table {
 font-size:27px;
 line-height:1em;
-background-color:#FFF;
-border:solid 10px;
+background-color: yellow;
+border: solid 10px brown;
 }
 
 td {
@@ -17,13 +17,9 @@ td.empty {
 background-position:center top;
 }
 
-tbody {
-background-color:#000;
-}
-
 tbody tr td {
 font-size:12pt;
-background-color:#000;
+background-color:brown;
 background-image:none;
 color:#FFF;
 text-align:center;
