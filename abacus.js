@@ -56,7 +56,7 @@ movebeads() {
         //show this bead
         $('#h' + j + '_' + i1).removeClass('empty');
         //highlight all moved beads
-        for (var i2 = i1; i2 >= i; i2--)
+        for (var i2 = Math.min(i1,i); i2 <= Math.max(i1,i); i2++)
             $('#h' + j + '_' + i2).addClass('active');
         break;
 
@@ -68,9 +68,9 @@ movebeads() {
         //update number
         $('#b' + j).text(number + i - i1);
         //show this bead
-        $('#f' + j + '_' + i1).removeClass('empty').addClass('active');
+        $('#f' + j + '_' + i1).removeClass('empty');
         //highlight all moved beads
-        for (var i2 = i1; i2 <= i; i2++)
+        for (var i2 = Math.min(i1,i); i2 <= Math.max(i1,i); i2++)
             $('#f' + j + '_' + i2).addClass('active');
         break;
         break;
