@@ -41,15 +41,20 @@ color:red;
 display:none;
 }
 
-ol#instruction {
+div.instruction-block {
 margin: 20px 20px;
-border: dotted 3pt green;
+border: solid 2pt gray;
+float: right;
+}
+
+div.instruction-block p {
+padding-left: 1em;
+}
+
+ol#instruction {
 width: 20em;
 height: 30em;
 overflow: auto;
-position: absolute;
-top:0;
-right:0;
 }
 
 input#a,input#b {
