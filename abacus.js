@@ -400,6 +400,7 @@ function handleForm() {
     switch ($('form#demo select').val()) {
     case 'plus':
         //show a on the right side of abacus
+        addInstruct("Populate abacus with left operand");
         var no = a.split('').reverse();
         for (var j = digits; j >= 1 && (digits - j) < no.length; j--) {
             var d = no[digits - j] - '0';
@@ -415,6 +416,7 @@ function handleForm() {
         break;
     case 'minus':
         //show a on the right side of abacus
+        addInstruct("Populate abacus with left operand");
         var no = a.split('').reverse();
         for (var j = digits; j >= 1 && (digits - j) < no.length; j--) {
             var d = no[digits - j] - '0';
@@ -443,6 +445,7 @@ function handleForm() {
         break;
     case 'times':
     //show a on the left side of abacus
+        addInstruct("Populate abacus with left operand");
         var no = a.split('');
         for (var j = 1; j <= digits && j <= no.length; j++) {
             var d = no[j - 1];
@@ -497,7 +500,7 @@ function handleForm() {
 
     } //end_switch
 
-addInstruct("Q.E.D.");
+addInstruct("End of instructions.");
     //prevent restart
     return false;
 }
