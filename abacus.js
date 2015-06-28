@@ -462,6 +462,7 @@ function handleForm() {
                 times(j + i, a_i, b[i], "show");
             }
         }
+	break;
     case 'divide by':
     //show a on the left side of abacus
         var no = a.split('');
