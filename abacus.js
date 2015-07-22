@@ -93,6 +93,7 @@ function addInstruct(str) {
         $(this).dequeue();
     });
     instructObj.queue(function () {
+		$(this).scrollTop($(this)[0].scrollHeight);
         $(this).find('li:last').fadeIn(step, function () {
             // unlabel all beads
             $('thead td, tfoot td').removeClass('active');
