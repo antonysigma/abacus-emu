@@ -25,9 +25,28 @@ function
 setNumber(j, d) {
     var k = Math.floor(d / 5); //thead
     var i = d - 5 * k + 1; //tfoot
-    if (k) $('#h' + j + '_2').trigger('click');
-    else $('#h' + j + '_3').trigger('click');
-    $('#f' + j + '_' + i).trigger('click');
+    
+    switch(k)
+    {
+        case 3:
+            $('#h' + j + '_1').trigger('click');
+            $('#f' + j + '_6').trigger('click');
+            break;
+        case 2:
+            $('#h' + j + '_1').trigger('click');
+            $('#f' + j + '_' + i).trigger('click');
+            break;
+        case 1:
+            $('#h' + j + '_2').trigger('click');
+            $('#f' + j + '_' + i).trigger('click');
+            break;
+        default:
+            $('#h' + j + '_3').trigger('click');
+            $('#f' + j + '_' + i).trigger('click');
+    }
+
+    if (d > 15)
+        overflow();
 }
 
 function
