@@ -109,6 +109,7 @@ $(function () {
 function addInstruct(str) {
     instructObj.queue(function () {
         $(this).append($('<li>' + str + '<\/li>').hide());
+
         $(this).dequeue();
     });
     instructObj.queue(function () {
@@ -116,6 +117,7 @@ function addInstruct(str) {
         $(this).find('li:last').fadeIn(step, function () {
             // unlabel all beads
             $('thead td, tfoot td').removeClass('active');
+			
             instructObj.dequeue();
         });
     });
@@ -326,18 +328,35 @@ addInstruct(divide2[d - 1][x - 1]);
         // Compute the true quotient
         var true_quo = Math.floor(a*10/b);
 
-        // Underestimated quotient
+        var quo_diff = true_quo - quo;
         if (true_quo > quo)
         {
-            if((true_quo-quo)*d <= 9)
-                addInstruct(divide1[d - 1][true_quo - quo - 1]);
+        // Underestimated quotient
+            if(quo_diff*d <= 9)
+                addInstruct(divide1[d - 1][quo_diff - 1]);
             else
-                addInstruct('Repeat "' + divide1[d - 1][0] + '" by ' + (true_quo-quo) + 'times');
+                addInstruct('Repeat "' + divide1[d - 1][0] + '" by ' + quo_diff + ' times');
         instructObj.queue(function () {
-            minus(j+1, (true_quo-quo)*d);
-            plus(j, true_quo-quo);
+            minus(j+1, quo_diff*d);
+            plus(j, quo_diff);
             $(this).dequeue();
         });
+        }
+        else if (true_quo < quo)
+        {
+        // Overestimated quotient
+            quo_diff *= -1
+            if (quo_diff > 1)
+                addInstruct('Repeat "' + divide4[d - 1] + '" by ' + quo_diff + ' times');
+            else
+                addInstruct(divide4[d - 1]);
+
+        instructObj.queue(function () {
+            plus(j+1, quo_diff*d);
+            minus(j, quo_diff);
+            $(this).dequeue();
+        });
+
         }
     }
 
