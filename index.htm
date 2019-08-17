@@ -18,11 +18,6 @@
 <body>
   <h1>Chinese Abacus Emulator</h1>
 
-  <div class="instruction-block">
-    <p>Instructions</p>
-    <ol id="instruction"></ol>
-  </div>
-
   <p>  <input type="radio" name="speed" id="slow" value="3000" />
   <label for="slow">Slow</label><input type="radio" id="fast" name="speed"
   value="500" /><label for="fast">Fast</label><input type="radio" id="insane" name="speed"
@@ -56,13 +51,20 @@
 
       <option>
         times
-      </option><!--option>divide by</option-->
+      </option>
+      <option>divide by</option>
     </select> <input maxlength="13" id="b" /> <input value="demo" type=
     "submit" /><br />
     <span id="invalid">The number is invalid.</span> <span id="overflow">Number
     overflow</span></p>
 
   </form>
+
+  <div class="instruction-block">
+    <p>Instructions</p>
+    <ol id="instruction"></ol>
+  </div>
+
 </body>
 </html>
 
