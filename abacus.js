@@ -309,7 +309,39 @@ addInstruct(divide1[d - 1][quo - 1]);
         });
 
     }
+    else
+    {
+        // Estimate quotient with the instruction set
+ var x = Math.floor(a*10);
+ var d = Math.floor(b*10);
+        var quo = Math.floor(x*10 / d);
+        var reminder = x*10 - quo * d;
+addInstruct(divide2[d - 1][x - 1]);
+        instructObj.queue(function () {
+            setNumber(j, quo);
+            setNumber(j + 1, reminder + getNumber(j+1));
+            $(this).dequeue();
+        });
 
+        // Compute the true quotient
+        var true_quo = Math.floor(a*10/b);
+
+        // Underestimated quotient
+        if (true_quo > quo)
+        {
+            if((true_quo-quo)*d <= 9)
+                addInstruct(divide1[d - 1][true_quo - quo - 1]);
+            else
+                addInstruct('Repeat "' + divide1[d - 1][0] + '" by ' + (true_quo-quo) + 'times');
+        instructObj.queue(function () {
+            minus(j+1, (true_quo-quo)*d);
+            plus(j, true_quo-quo);
+            $(this).dequeue();
+        });
+        }
+    }
+
+    //addInstruct('Quotient = ' + Math.floor(a*10/b) + '; Reminder = ' + (a*10 - Math.floor(a*10/b)) );
 }
 
 //================ Integer Functions ================
@@ -484,31 +516,14 @@ function handleForm() {
 	break;
     case 'divide by':
     //show a on the left side of abacus
+        addInstruct("Populate abacus with left operand");
         var no = a.split('');
         for (var j = 2; j <= digits && j-1 <= no.length; j++) {
             var d = no[j - 2];
             setNumber(j, d);
         }
 
-   var quo = get_quo(2,parseFloat('0.'+a),parseFloat('0.'+b));
-/*        //times b digit by digit
-        var no = b.split('');
-        var a_i;
-        for (var j = 2; j <= a.length+1; j++) {
-
-            //take out last digit from a and remove it from the suanpan
-            a_i = getNumber(j);
-            if (a_i == 0) continue;
-            quo = divide(j, a_i, b[0], "show");
-
-            for (i = 1; i < b.length; i++) {
-                if (i + j > digits) {
-                    overflow();
-                    continue;
-                }
-                times(j + i, a_i, b[i], "show");
-            }
-        }*/
+   divide_by(2,parseFloat('0.'+a),parseFloat('0.'+b));
 
     } //end_switch
 
