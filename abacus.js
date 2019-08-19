@@ -287,7 +287,7 @@ divide2[2] = ['三一三十一 10=3*3+1', '三二六十二 20=3*6+2'];
 divide2[3] = ['四一二十二 10=4*2+2','四二添作五 20=2*5','四三七十二 30=7*2'];
 divide2[4] = ['五一添作二 10=5*2','五二添作四 20=5*4','五三添作六 30=5*5+6','五四添作八 40=5*4+8'];
 divide2[5] = ['六一下加四 10=6*1+4','六二三十二 20=6*3+2','六三添作五 30=6*3+5','六四六十四','六五八十二'];
-divide2[6] = ['七一下加七 10=7*1+3','七二下加六 20=7*2+6','七三四十二 30=7*4+2','七四五十五','七五七十一','七六八十二'];
+divide2[6] = ['七一下加三 10=7*1+3','七二下加六 20=7*2+6','七三四十二 30=7*4+2','七四五十五','七五七十一','七六八十二'];
 divide2[7] = ['八一下加二 10=8*1+2','八二下加四 20=8*2+4','八三下加六 30=8*8+6','八四添作五','八五六十二','八六七十四','八七八十六'];
 divide2[8] = ['九一下加一 10=4*1+6','九二下加二 20=9*2+2','九三下加三 30=9*3+3','九四下加四','九五下加五','九交下加六','九七下加七','九八下加八'];
 
@@ -301,9 +301,11 @@ divide_by(j,a, b) {
     if (a == 0 || b == 0) return;
 
     if (a >= b) {
- var quo = Math.floor(a/b);
+ var true_quo = Math.floor(a/b);
+
  var d = Math.floor(b*10);
-addInstruct(divide1[d - 1][quo - 1]);
+
+        addInstruct(divide1[d - 1][true_quo - 1]);
         instructObj.queue(function () {
             minus(j, quo*d);
             plus(j - 1, quo);
@@ -360,7 +362,24 @@ addInstruct(divide2[d - 1][x - 1]);
         }
     }
 
-    //addInstruct('Quotient = ' + Math.floor(a*10/b) + '; Reminder = ' + (a*10 - Math.floor(a*10/b)) );
+    //
+
+    if (j+1 < digits)
+    {
+        instructObj.queue(function () {
+            let a = 0;
+            let scale = 1;
+            for (var i=j+1; i<digits; i++)
+            {
+                a = a*10 + getNumber(i);
+                scale *= 10;
+            }
+
+            divide_by(j+1, a/scale, b);
+            $(this).dequeue();
+        });
+    }
+
 }
 
 //================ Integer Functions ================
@@ -542,7 +561,20 @@ function handleForm() {
             setNumber(j, d);
         }
 
-   divide_by(2,parseFloat('0.'+a),parseFloat('0.'+b));
+       divide_by(2,parseFloat('0.'+a), parseFloat('0.'+b));
+   //for(var j = 2; j< digits-1; j++) {
+   //    var x = 0;
+   //    var scale = 1;
+   //    for (var k=j; k < digits-1; k++) {
+   //        x = x * 10 + getNumber(k); // BUG: not yet registered
+   //        scale *= 10;
+   //    }
+
+   //    if (x == 0)
+   //        break;
+
+   //    divide_by(j,x/scale, parseFloat('0.'+b));
+   //}
 
     } //end_switch
 
