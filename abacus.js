@@ -286,10 +286,10 @@ divide2[1] = ['二一添作五 10/2=5'];
 divide2[2] = ['三一三十一 10=3*3+1', '三二六十二 20=3*6+2'];
 divide2[3] = ['四一二十二 10=4*2+2','四二添作五 20=2*5','四三七十二 30=7*2'];
 divide2[4] = ['五一添作二 10=5*2','五二添作四 20=5*4','五三添作六 30=5*5+6','五四添作八 40=5*4+8'];
-divide2[5] = ['六一下加四 10=6*1+4','六二三十二 20=6*3+2','六三添作五 30=6*3+5','六四六十四','六五八十二'];
-divide2[6] = ['七一下加三 10=7*1+3','七二下加六 20=7*2+6','七三四十二 30=7*4+2','七四五十五','七五七十一','七六八十二'];
-divide2[7] = ['八一下加二 10=8*1+2','八二下加四 20=8*2+4','八三下加六 30=8*8+6','八四添作五','八五六十二','八六七十四','八七八十六'];
-divide2[8] = ['九一下加一 10=4*1+6','九二下加二 20=9*2+2','九三下加三 30=9*3+3','九四下加四','九五下加五','九交下加六','九七下加七','九八下加八'];
+divide2[5] = ['六一下加四 10=6*1+4','六二三十二 20=6*3+2','六三添作五 30=6*3+5','六四六十四 40=6*6+4','六五八十二 50=6*8+2'];
+divide2[6] = ['七一下加三 10=7*1+3','七二下加六 20=7*2+6','七三四十二 30=7*4+2','七四五十五 40=7*5+5','七五七十一 50=7*7+1','七六八十二 60=7*8+2'];
+divide2[7] = ['八一下加二 10=8*1+2','八二下加四 20=8*2+4','八三下加六 30=8*8+6','八四添作五 40=8*5','八五六十二 50=8*6+2','八六七十四 60=8*7+4','八七八十六 70=8*8+6'];
+divide2[8] = ['九一下加一 10=4*1+6','九二下加二 20=9*2+2','九三下加三 30=9*3+3','九四下加四 40=9*4+4','九五下加五 50=9*5+5','九六下加六 60=9*6+6','九七下加七 70=9*7+7','九八下加八 80=9*8+8'];
 
 divide3 = ['見一無除作九一','見二無除作九二','見三無除作九三','見四無除作九四','見五無除作九五','見六無除作九六','見七無除作九七'];
 divide4 = ['借一還一','借一還二','借一還三','借一還四','借一還五','借一還六','借一還七','借一還八','借一還九'];
@@ -300,9 +300,10 @@ divide_by(j,a, b) {
     //skip zero digit
     if (a == 0 || b == 0) return;
 
-    if (a >= b) {
- var true_quo = Math.floor(a/b);
+    // Compute the true quotient
+    var true_quo = Math.floor(a*10/b);
 
+    if (a >= b) {
  var d = Math.floor(b*10);
 
         addInstruct(divide1[d - 1][true_quo - 1]);
@@ -313,11 +314,12 @@ divide_by(j,a, b) {
         });
 
     }
-    else
+    else if (Math.floor(a*10) > 0)
     {
         // Estimate quotient with the instruction set
  var x = Math.floor(a*10);
  var d = Math.floor(b*10);
+
         var quo = Math.floor(x*10 / d);
         var reminder = x*10 - quo * d;
 addInstruct(divide2[d - 1][x - 1]);
@@ -326,9 +328,6 @@ addInstruct(divide2[d - 1][x - 1]);
             setNumber(j + 1, reminder + getNumber(j+1));
             $(this).dequeue();
         });
-
-        // Compute the true quotient
-        var true_quo = Math.floor(a*10/b);
 
         var quo_diff = true_quo - quo;
         if (true_quo > quo)
@@ -362,24 +361,33 @@ addInstruct(divide2[d - 1][x - 1]);
         }
     }
 
-    //
-
-    if (j+1 < digits)
+    // Long division
+    if (true_quo > 0 && Math.log10(b - d/10) > -digits )
     {
-        instructObj.queue(function () {
-            let a = 0;
-            let scale = 1;
-            for (var i=j+1; i<digits; i++)
-            {
-                a = a*10 + getNumber(i);
-                scale *= 10;
-            }
+        let y = Math.round( (b-d/10) * Math.pow(10,digits) ) / Math.pow(10,digits-1);
+        addInstruct("Subtract by " + y + " * " + true_quo +
+            " = " + y*true_quo );
 
-            divide_by(j+1, a/scale, b);
-            $(this).dequeue();
-        });
+        y *= true_quo;
+        //for (let k=j+1; k<digits || Math.log10(y)>-digits; k++)
+        // BUG: round off error when number = 0.3999999
+        for (let k=j+1; k<digits; k++)
+        {
+            let r = Math.floor(y);
+            if (r > 0)
+                instructObj.queue(function () {
+                    minus(k, r);
+                    $(this).dequeue();
+                });
+            y = (y-r) * 10;
+        }
     }
 
+    // Recursion
+    // BUG: program terminated when x == 0
+    var remainder = a*10-true_quo*b;
+    if(j+1 < digits) // && reminder * Math.pow(10, digits) > 0)
+        divide_by(j+1, remainder, b);
 }
 
 //================ Integer Functions ================
@@ -561,19 +569,19 @@ function handleForm() {
             setNumber(j, d);
         }
 
-       divide_by(2,parseFloat('0.'+a), parseFloat('0.'+b));
-   //for(var j = 2; j< digits-1; j++) {
-   //    var x = 0;
-   //    var scale = 1;
-   //    for (var k=j; k < digits-1; k++) {
-   //        x = x * 10 + getNumber(k); // BUG: not yet registered
-   //        scale *= 10;
-   //    }
 
-   //    if (x == 0)
+   divide_by(2,parseFloat('0.'+a), parseFloat('0.'+b));
+
+   //var x = parseFloat('0.'+a);
+   //var d = parseFloae('0,'+b);
+   //for(var j = 2; j< digits-1; j++) {
+   //    if (Math.log10(x) < -digits)
    //        break;
 
-   //    divide_by(j,x/scale, parseFloat('0.'+b));
+   //    divide_by(j,x,d);
+
+   //    var true_quo = x*10 - d;
+   //    x = x*10 - true_quo*d;
    //}
 
     } //end_switch
