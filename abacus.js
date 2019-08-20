@@ -299,66 +299,74 @@ divide_by(j,a, b) {
 
     //skip zero digit
     if (a == 0 || b == 0) return;
+    if (a >= b)
+    {
+        divide_by(j-1,a/10, b);
+        return;
+    }
+
+    // Find the first digits
+     var x = Math.floor(a*10);
+     var d = Math.floor(b*10);
+
+    // Estimate the quotient
+     var quo = Math.floor(x*10/d);
 
     // Compute the true quotient
     var true_quo = Math.floor(a*10/b);
 
-    if (a >= b) {
- var d = Math.floor(b*10);
-
-        addInstruct(divide1[d - 1][true_quo - 1]);
+    if (quo >= 10) {
+        // Todo: avoid using true quotient
+        q = Math.floor(quo/10);
+        addInstruct(divide1[d - 1][q - 1]);
         instructObj.queue(function () {
-            minus(j, quo*d);
-            plus(j - 1, quo);
+            minus(j, q*d);
+            plus(j-1, q);
             $(this).dequeue();
         });
-
     }
     else if (Math.floor(a*10) > 0)
     {
-        // Estimate quotient with the instruction set
- var x = Math.floor(a*10);
- var d = Math.floor(b*10);
-
-        var quo = Math.floor(x*10 / d);
         var reminder = x*10 - quo * d;
-addInstruct(divide2[d - 1][x - 1]);
+
+        addInstruct(divide2[d - 1][x - 1]);
+
         instructObj.queue(function () {
             setNumber(j, quo);
             setNumber(j + 1, reminder + getNumber(j+1));
             $(this).dequeue();
         });
+    }
 
-        var quo_diff = true_quo - quo;
-        if (true_quo > quo)
-        {
-        // Underestimated quotient
-            if(quo_diff*d <= 9)
-                addInstruct(divide1[d - 1][quo_diff - 1]);
-            else
-                addInstruct('Repeat "' + divide1[d - 1][0] + '" by ' + quo_diff + ' times');
-        instructObj.queue(function () {
-            minus(j+1, quo_diff*d);
-            plus(j, quo_diff);
-            $(this).dequeue();
-        });
-        }
-        else if (true_quo < quo)
-        {
-        // Overestimated quotient
-            quo_diff *= -1
-            if (quo_diff > 1)
-                addInstruct('Repeat "' + divide4[d - 1] + '" by ' + quo_diff + ' times');
-            else
-                addInstruct(divide4[d - 1]);
+    var quo_diff = true_quo - quo;
+    if (true_quo > quo)
+    {
+    // Underestimated quotient
+        if(quo_diff*d <= 9)
+            addInstruct(divide1[d - 1][quo_diff - 1]);
+        else
+            addInstruct('Repeat "' + divide1[d - 1][0] + '" by ' + quo_diff + ' times');
+    instructObj.queue(function () {
+        minus(j+1, quo_diff*d);
+        plus(j, quo_diff);
+        $(this).dequeue();
+    });
+    }
+    else if (true_quo < quo)
+    {
+    // Overestimated quotient
+        quo_diff *= -1
+        if (quo_diff > 1)
+            addInstruct('Repeat "' + divide4[d - 1] + '" by ' + quo_diff + ' times');
+        else
+            addInstruct(divide4[d - 1]);
 
-        instructObj.queue(function () {
-            plus(j+1, quo_diff*d);
-            minus(j, quo_diff);
-            $(this).dequeue();
-        });
+    instructObj.queue(function () {
+        plus(j+1, quo_diff*d);
+        minus(j, quo_diff);
+        $(this).dequeue();
+    });
 
-        }
     }
 
     // Long division
@@ -384,10 +392,19 @@ addInstruct(divide2[d - 1][x - 1]);
     }
 
     // Recursion
-    // BUG: program terminated when x == 0
-    var remainder = a*10-true_quo*b;
-    if(j+1 < digits) // && reminder * Math.pow(10, digits) > 0)
-        divide_by(j+1, remainder, b);
+    if (true_quo >= 10)
+    {
+        // Bug: round off error
+        var remainder = a*10-Math.floor(true_quo/10)*10*b;
+        if(j+1 < digits) // && reminder * Math.pow(10, digits) > 0)
+            divide_by(j+1, remainder, b);
+    }
+    else
+    {
+        var remainder = a*10-true_quo*b;
+        if(j+1 < digits) // && reminder * Math.pow(10, digits) > 0)
+            divide_by(j+1, remainder, b);
+    }
 }
 
 //================ Integer Functions ================
