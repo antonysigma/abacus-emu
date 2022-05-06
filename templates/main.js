@@ -1,22 +1,34 @@
+import Backbone from 'backbone';
+
 var digits = 7;
 
 //================== Banners ========================
-$(function () {
-    overflowObj = $('#overflow');
+const OverflowView = Backbone.View.extend({
+    el: '#overflow',
+    flashMessage() {
+        this.$el.show();
+        this.$el.fadeOut(3000);
+    }
 });
+
+const overflow_view = new OverflowView();
 
 function overflow() {
-    overflowObj.show();
-    overflowObj.fadeOut(3000);
+    overflow_view.flashMessage();
 }
 
-$(function () {
-    invalidObj = $('#invalid');
+const InvalidView = Backbone.View.extend({
+    el: '#invalid',
+    flashMessage() {
+        this.$el.show();
+        this.$el.fadeOut(3000);
+    }
 });
 
+const invalid_view = new InvalidView();
+
 function invalid() {
-    invalidObj.show();
-    invalidObj.fadeOut(3000);
+    invalid_view.flashMessage();
 }
 
 //================= ABACUS BACKENDS ================
@@ -102,25 +114,39 @@ movebeads() {
 
 //============== INSTRUCTION TABLE ============
 var step = 3000; //half a sec
-$(function () {
-    instructObj = $('ol#instruction');
+
+const InstructView = Backbone.View.extend({
+    el: 'ol#instruction',
+    append(str) {
+        this.$el.queue(function () {
+            $(this).append($('<li>' + str + '<\/li>').hide());
+
+            $(this).dequeue();
+        });
+        this.$el.queue(function () {
+            $(this).scrollTop($(this)[0].scrollHeight);
+            $(this).find('li:last').fadeIn(step, function () {
+                // unlabel all beads
+                $('thead td, tfoot td').removeClass('active');
+                
+                this.$el.dequeue();
+            });
+        });
+    },
+    queue(func) {
+        this.$el.queue(func);
+    },
+    reset() {
+        this.$el.queue("fx", []);
+        this.$el.stop();
+        this.$el.html('');
+    }
 });
 
-function addInstruct(str) {
-    instructObj.queue(function () {
-        $(this).append($('<li>' + str + '<\/li>').hide());
+var instruct_view = new InstructView();
 
-        $(this).dequeue();
-    });
-    instructObj.queue(function () {
-		$(this).scrollTop($(this)[0].scrollHeight);
-        $(this).find('li:last').fadeIn(step, function () {
-            // unlabel all beads
-            $('thead td, tfoot td').removeClass('active');
-			
-            instructObj.dequeue();
-        });
-    });
+function addInstruct(str) {
+    instruct_view.append(str);
 }
 
 
@@ -153,13 +179,13 @@ plus(j, d, type) {
             else addInstruct(plus3[d - 1]);
         }
         //add operation to queue
-        if (sum >= 10) instructObj.queue(function () {
+        if (sum >= 10) instruct_view.queue(function () {
             setNumber(j, sum - 10);
             if (j - 1 >= 1) plus(j - 1, 1);
             else overflow();
             $(this).dequeue();
         });
-        else instructObj.queue(function () {
+        else instruct_view.queue(function () {
             setNumber(j, sum);
             $(this).dequeue();
         });
@@ -203,7 +229,7 @@ minus(j, d, type) {
             else addInstruct(minus3[d - 1]);
         }
         //add operation to queue
-        if (diff < 10) instructObj.queue(function () {
+        if (diff < 10) instruct_view.queue(function () {
             setNumber(j, diff);
             if (j - 1 >= 1) minus(j - 1, 1);
             else {
@@ -213,7 +239,7 @@ minus(j, d, type) {
             }
             $(this).dequeue();
         });
-        else instructObj.queue(function () {
+        else instruct_view.queue(function () {
             setNumber(j, diff - 10);
             $(this).dequeue();
         });
@@ -256,7 +282,7 @@ times(j, a, d, type, flag_replace) {
         else addInstruct(times1[d - 1][a - 1]);
 
         //add operation to queue
-        instructObj.queue(function () {
+        instruct_view.queue(function () {
             if (j + 1 <= digits) {
                 if (flag_replace) //overwrite the original digit
                 setNumber(j, Math.floor(prod / 10));
@@ -319,7 +345,7 @@ divide_by(j,a, b) {
         // Todo: avoid using true quotient
         q = Math.floor(quo/10);
         addInstruct(divide1[d - 1][q - 1]);
-        instructObj.queue(function () {
+        instruct_view.queue(function () {
             minus(j, q*d);
             plus(j-1, q);
             $(this).dequeue();
@@ -331,7 +357,7 @@ divide_by(j,a, b) {
 
         addInstruct(divide2[d - 1][x - 1]);
 
-        instructObj.queue(function () {
+        instruct_view.queue(function () {
             setNumber(j, quo);
             setNumber(j + 1, reminder + getNumber(j+1));
             $(this).dequeue();
@@ -346,7 +372,7 @@ divide_by(j,a, b) {
             addInstruct(divide1[d - 1][quo_diff - 1]);
         else
             addInstruct('Repeat "' + divide1[d - 1][0] + '" by ' + quo_diff + ' times');
-    instructObj.queue(function () {
+    instruct_view.queue(function () {
         minus(j+1, quo_diff*d);
         plus(j, quo_diff);
         $(this).dequeue();
@@ -361,7 +387,7 @@ divide_by(j,a, b) {
         else
             addInstruct(divide4[d - 1]);
 
-    instructObj.queue(function () {
+    instruct_view.queue(function () {
         plus(j+1, quo_diff*d);
         minus(j, quo_diff);
         $(this).dequeue();
@@ -383,7 +409,7 @@ divide_by(j,a, b) {
         {
             let r = Math.floor(y);
             if (r > 0)
-                instructObj.queue(function () {
+                instruct_view.queue(function () {
                     minus(k, r);
                     $(this).dequeue();
                 });
@@ -536,11 +562,11 @@ function handleForm() {
             var d = no[j - digits - 1 + b.length] - '0';
             minus(j, d, "show");
         }
-        instructObj.queue(function () {
+        instruct_view.queue(function () {
             if (!minusflag) return;
             //negative number
             addInstruct("(負數)向左還一 10's complement");
-            instructObj.queue(function () {
+            instruct_view.queue(function () {
                 for (var j = 1; j <= digits - 1; j++)
                 setNumber(j, 9 - getNumber(j));
                 setNumber(j, 10 - getNumber(j));
@@ -645,45 +671,52 @@ function draw_abacus() {
     $('#abacus_container').append(table.append(thead, tbody, tfoot));
 }
 
-$(draw_abacus);
+//precision setup
+const PrecisionView = Backbone.View.extend({
+    el: '#precision-bar',
+    events: {
+      'click button':  'onClick',
+    },
+    onClick() {
+        digits = parseInt(this.$el.find('#precision').val());
+        $('#abacus_container table').remove();
+        draw_abacus();
+    },
+});
 
-//reset button: set all to zero
-$(function () {
-    $('button:contains("Reset")').click(function () {
-        instructObj.queue("fx", []);
-        instructObj.stop();
-        instructObj.html('');
+//demo button: demonstration
+const InputView = Backbone.View.extend({
+    el: '#demo',
+    events: {
+        'submit': 'onSubmit',
+      'click button:contains("Reset")':  'onReset',
+    },
+    onSubmit() {
+        return handleForm();
+    },
+    onReset() {
+        instruct_view.reset();
         for (var j = 1; j <= digits; j++) //from 3nd column to 11th column
         setNumber(j, 0);
-    });
-}
+    },
+    onSpeedChange() {
 
-);
+    }
+});
 
-//speed control
 $(function () {
+    const precision_view = new PrecisionView();
+    const input_view = new InputView();
+
+    // Speed control
     $('input[name="speed"]').change(function () {
         step = parseInt($(this).val());
     });
     $('input[name="speed"]:checked').change();
-});
 
-//precision setup
-$(function () {
-    $('button:contains("Change")').click(function () {
-        digits = parseInt($('select#precision').val());
-        $('#abacus_container table').remove();
-        draw_abacus();
-    });
-});
+    draw_abacus();
 
-//demo button: demonstration
-$(function () {
-    $('form#demo').submit(handleForm);
-});
-
-//initial number: 123456789
-$(function () {
+    // Set 12345 as default
     for (var j = 3; j <= 11; j++) //from 3nd column to 11th column
     setNumber(j, j - 2);
 });
