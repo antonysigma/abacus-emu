@@ -12,6 +12,35 @@
 </script>
   <script type="text/javascript" src="main.js">
 </script>
+<script id="abacus-template" type="text/template">
+<table class="abacuspad" cellspacing="0">
+<thead>
+<% _.forEach(_.range(3), function (i) { %>
+    <tr>
+<% _.forEach(_.range(digits), function (j) { %>
+    <td class="h<%= i %>_<%= j %>">&#xFEFF;</td>
+<% }) %>
+    </tr>
+<% }); %>
+</thead>
+<tbody>
+    <tr>
+<% _.forEach(_.range(digits), function (j) { %>
+    <td class="b<%= j %>">0</td>
+<% }) %>
+    </tr>
+</tbody>
+<tfoot>
+<% _.forEach(_.range(6), function (i) { %>
+    <tr>
+<% _.forEach(_.range(digits), function (j) { %>
+    <td class="f<%= i %>_<%= j %>">&#xFEFF;</td>
+<% }) %>
+    </tr>
+<% }); %>
+</tfoot>
+</table>
+</script>
 </head>
 
 <body>
@@ -37,6 +66,7 @@
   </select><button>Change</button></div>
 
   <div id="abacus_container"></div>
+  <div id="abacus_container2"></div>
 
   <form action="#" id="demo" name="demo">
 <button>Reset</button>

@@ -635,6 +635,24 @@ addInstruct("End of instructions.");
 }
 
 //draw abacuspad
+const AbacusView = Backbone.View.extend({
+    el: '#abacus_container2',
+    initialize(options) {
+        this.template = _.template($('#abacus-template').html());
+        this.model = options.model;
+        this.render();
+    },
+    render() {
+        this.$el.html(this.template({digits: this.model.get('digits')}));
+
+        // Last row is empty
+        this.$el.find('thead tr:last td').addClass('empty');
+
+        // top row is empty
+        this.$el.find('tfoot tr:first td').addClass('empty');
+        return this;
+    },
+});
 
 function draw_abacus() {
     var table = $('<table id="abacuspad" cellspacing="0"><\/table>');
@@ -732,6 +750,8 @@ $(function () {
     const precision_view = new PrecisionView({model: config_model});
     const speed_view = new SpeedView({model: config_model});
     const input_view = new InputView();
+
+    const abacus_view = new AbacusView({model: config_model});
 
     draw_abacus();
 
