@@ -634,12 +634,28 @@ addInstruct("End of instructions.");
     return false;
 }
 
+const AbacusModel = Backbone.Model.extend({
+    defaults: {
+        digits: 7,
+    },
+});
+
+const ComputeModel = Backbone.Model.extend({
+    defaults: {
+        speed: 0,
+    },
+});
+
 //draw abacuspad
 const AbacusView = Backbone.View.extend({
     el: '#abacus_container2',
+    events: {
+        'click td': 'onClick',
+    },
     initialize(options) {
         this.template = _.template($('#abacus-template').html());
         this.model = options.model;
+        this.model.on('change', this.render, this);
         this.render();
     },
     render() {
@@ -651,6 +667,64 @@ const AbacusView = Backbone.View.extend({
         // top row is empty
         this.$el.find('tfoot tr:first td').addClass('empty');
         return this;
+    },
+    moveHeadBead(i, j, number) {
+        //find the index of original empty td
+        for (var i1 = 3; i1 >= 1; i1--) {
+            var this_bead = this.$el.find('.h' + j + '_' + i1);
+            if (this_bead.hasClass('empty')) {
+                this_bead.removeClass('empty');
+                break;
+            }
+        }
+        //update number
+        this.$el.find('.b' + j).text(number - (i - i1) * 5);
+
+        //highlight all moved beads
+        for (var i2 = Math.min(i1,i); i2 <= Math.max(i1,i); i2++) {
+            this.$el.find('.h' + j + '_' + i2).addClass('active');
+        }
+    },
+    moveFootBead(i, j, number) {
+        //find the index of original empty td
+        for (var i1 = 1; i1 <= 6; i1++) {
+            if (this.$el.find('.f' + j + '_' + i1).hasClass('empty')) break;
+        }
+        //update number
+        this.$el.find('.b' + j).text(number + i - i1);
+
+        //show this bead
+        this.$el.find('.f' + j + '_' + i1).removeClass('empty');
+        //highlight all moved beads
+        for (var i2 = Math.min(i1,i); i2 <= Math.max(i1,i); i2++) {
+            this.$el.find('.f' + j + '_' + i2).addClass('active');
+            break;
+        }
+    },
+    onClick(e) {
+        // Identify the bead on the abacus
+        const bead = $(e.currentTarget);
+        const id = bead.attr('class');
+
+        id.match(/^[hf](\d+)_(\d+)$/i);
+        const j = parseInt(RegExp.$1);
+        const i = parseInt(RegExp.$2);
+        const type = id.charAt(0);
+
+        const number = parseInt(this.$el.find('.b' + j).text());
+    
+    switch (type) {
+    case 'h': 
+        //thead beads
+        this.moveHeadBead(i, j, number);
+        break;
+    case 'f': 
+        //tfoot beads
+        this.moveFootBead(i, j, number);
+        break;
+    }
+    //this td becomes empty
+    bead.addClass("empty");
     },
 });
 
@@ -689,15 +763,8 @@ function draw_abacus() {
     $('#abacus_container').append(table.append(thead, tbody, tfoot));
 }
 
-const ConfigModel = Backbone.Model.extend({
-    defaults: {
-        speed: 0,
-        digits: 7,
-    },
-});
-
 //precision setup
-const PrecisionView = Backbone.View.extend({
+const PrecisionInputView = Backbone.View.extend({
     el: '#precision-bar',
     events: {
       'click button':  'onClick',
@@ -746,12 +813,14 @@ const InputView = Backbone.View.extend({
 });
 
 $(function () {
-    const config_model = new ConfigModel();
-    const precision_view = new PrecisionView({model: config_model});
-    const speed_view = new SpeedView({model: config_model});
+    const abacus_model = new AbacusModel();
+    const precision_view = new PrecisionInputView({model: abacus_model});
+
+    const compute_model = new ComputeModel();
+    const speed_view = new SpeedView({model: compute_model});
     const input_view = new InputView();
 
-    const abacus_view = new AbacusView({model: config_model});
+    const abacus_view = new AbacusView({model: abacus_model});
 
     draw_abacus();
 

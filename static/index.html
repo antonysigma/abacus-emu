@@ -15,26 +15,26 @@
 <script id="abacus-template" type="text/template">
 <table class="abacuspad" cellspacing="0">
 <thead>
-<% _.forEach(_.range(3), function (i) { %>
+<% _.forEach(_.range(1, 4), function (i) { %>
     <tr>
-<% _.forEach(_.range(digits), function (j) { %>
-    <td class="h<%= i %>_<%= j %>">&#xFEFF;</td>
+<% _.forEach(_.range(1, digits + 1), function (j) { %>
+    <td class="h<%= j %>_<%= i %>">&#xFEFF;</td>
 <% }) %>
     </tr>
 <% }); %>
 </thead>
 <tbody>
     <tr>
-<% _.forEach(_.range(digits), function (j) { %>
+<% _.forEach(_.range(1, digits + 1), function (j) { %>
     <td class="b<%= j %>">0</td>
 <% }) %>
     </tr>
 </tbody>
 <tfoot>
-<% _.forEach(_.range(6), function (i) { %>
+<% _.forEach(_.range(1, 7), function (i) { %>
     <tr>
-<% _.forEach(_.range(digits), function (j) { %>
-    <td class="f<%= i %>_<%= j %>">&#xFEFF;</td>
+<% _.forEach(_.range(1, digits + 1), function (j) { %>
+    <td class="f<%= j %>_<%= i %>">&#xFEFF;</td>
 <% }) %>
     </tr>
 <% }); %>
