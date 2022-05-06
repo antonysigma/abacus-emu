@@ -671,19 +671,45 @@ function draw_abacus() {
     $('#abacus_container').append(table.append(thead, tbody, tfoot));
 }
 
+const ConfigModel = Backbone.Model.extend({
+    defaults: {
+        speed: 0,
+        digits: 7,
+    },
+});
+
 //precision setup
 const PrecisionView = Backbone.View.extend({
     el: '#precision-bar',
     events: {
       'click button':  'onClick',
     },
+    initialize(options) {
+        this.model = options.model;
+    },
     onClick() {
         digits = parseInt(this.$el.find('#precision').val());
+        this.model.set({digits: digits});
         $('#abacus_container table').remove();
         draw_abacus();
     },
 });
 
+// Speed control
+const SpeedView = Backbone.View.extend({
+    el: '#speed-bar',
+    events: {
+      'change':  'onChange',
+    },
+    initialize(options) {
+        this.model = options.model;
+        this.onChange();
+    },
+    onChange() {
+        step = parseInt(this.$el.find('input[name="speed"]').val());
+        this.model.set({speed: step});
+    },
+});
 //demo button: demonstration
 const InputView = Backbone.View.extend({
     el: '#demo',
@@ -699,20 +725,13 @@ const InputView = Backbone.View.extend({
         for (var j = 1; j <= digits; j++) //from 3nd column to 11th column
         setNumber(j, 0);
     },
-    onSpeedChange() {
-
-    }
 });
 
 $(function () {
-    const precision_view = new PrecisionView();
+    const config_model = new ConfigModel();
+    const precision_view = new PrecisionView({model: config_model});
+    const speed_view = new SpeedView({model: config_model});
     const input_view = new InputView();
-
-    // Speed control
-    $('input[name="speed"]').change(function () {
-        step = parseInt($(this).val());
-    });
-    $('input[name="speed"]:checked').change();
 
     draw_abacus();
 
