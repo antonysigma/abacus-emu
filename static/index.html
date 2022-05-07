@@ -12,6 +12,12 @@
 </script>
   <script type="text/javascript" src="main.js">
 </script>
+<script id="instruction-template" type="text/template">
+<% _.forEach(command, function (cmd) { %>
+    <li><%= cmd %></li>
+<% }) %>
+</script>
+
 <script id="abacus-template" type="text/template">
 <table class="abacuspad" cellspacing="0">
 <thead>

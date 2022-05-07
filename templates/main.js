@@ -1,8 +1,16 @@
 import Backbone from 'backbone';
+import _ from 'underscore';
 
 var digits = 7;
 
 //================== Banners ========================
+const ExceptionModel = Backbone.Model.extend({
+    default: {
+        overflow: 0,
+        invalid: 0,
+    },
+});
+
 const OverflowView = Backbone.View.extend({
     el: '#overflow',
     flashMessage() {
@@ -99,7 +107,6 @@ function movebeads() {
             for (var i2 = Math.min(i1, i); i2 <= Math.max(i1, i); i2++)
                 $('#f' + j + '_' + i2).addClass('active');
             break;
-            break;
     }
 
     // this td becomes empty
@@ -109,21 +116,37 @@ function movebeads() {
 //============== INSTRUCTION TABLE ============
 var step = 3000;  // half a sec
 
+const InstructionModel = Backbone.Model.extend({
+    default: {
+        command: [],
+    },
+});
+
 const InstructView = Backbone.View.extend({
-    el: 'ol#instruction',
+    el: '#instruction',
+    initialize(options) {
+        this.model = options.model;
+        this.template = _.template($('#instruction-template').html());
+
+        this.render();
+    },
+    render() {
+        this.$el.html(this.template(this.model.attributes));
+    },
     append(str) {
         this.$el.queue(function() {
             $(this).append($('<li>' + str + '<\/li>').hide());
 
             $(this).dequeue();
         });
+        var self = this.$el;
         this.$el.queue(function() {
             $(this).scrollTop($(this)[0].scrollHeight);
             $(this).find('li:last').fadeIn(step, function() {
                 // unlabel all beads
                 $('thead td, tfoot td').removeClass('active');
 
-                this.$el.dequeue();
+                self.dequeue();
             });
         });
     },
@@ -137,35 +160,29 @@ const InstructView = Backbone.View.extend({
     }
 });
 
-var instruct_view = new InstructView();
-
-function addInstruct(str) {
-    instruct_view.append(str);
-}
-
 
 //============== BASIC ARITHMATICS (PLUS) ============
-var plus1 = [
+const plus1 = [
     '一上一 add 1', '二上二 add 2', '三上三 add 3', '四上四 add 4', '五上五 add 5', '六上六 add 6',
     '七上七 add 7', '八上八 add 8', '九上九 add 9'
 ];
-var plus2 = [
+const plus2 = [
     '一下五去四 add 5 minus 4', '二下五去三 add 5 minus 3', '三下五去二 add 5 minus 1',
     '四下五去一 add 5 minus 1'
 ];
-var plus3 = [
+const plus3 = [
     '一去九進一 minus 9 carry out 1', '二去八進一 minus 8 carry out 1',
     '三去七進一 minus 7 carry out 1', '四去六進一 minus 6 carry out 1',
     '五去五進一 minus 5 carry out 1', '六去四進一 minus 4 carry out 1',
     '七去三進一 minus 3 carry out 1', '八去二進一 minus 2 carry out 1',
     '九去一進一 minus 1 carry out 1'
 ];
-var plus4 = [
+const plus4 = [
     '六上一去五進一 add 1 minus 5 carry out 1', '七上二去五進一 add 2 minus 5 carry out 1',
     '八上三去五進一 add 3 minus 5 carry out 1', '九上四去五進一 add 4 minus 5 carry out 1'
 ];
 
-function plus(j, d, type) {
+function plus(j, d, type, instruct_view) {
     // skip zero digit
     if (d == 0) return;
     var a = getNumber(j);
@@ -174,23 +191,23 @@ function plus(j, d, type) {
     if (type == 'show') {
         if (d < 5) {
             if (sum >= 10)
-                addInstruct(plus3[d - 1]);
+                instruct_view.append(plus3[d - 1]);
             else if (a < 5 && sum >= 5)
-                addInstruct(plus2[d - 1]);
+                instruct_view.append(plus2[d - 1]);
             else
-                addInstruct(plus1[d - 1]);
+                instruct_view.append(plus1[d - 1]);
         } else if (d == 5) {
             if (sum < 10)
-                addInstruct(plus1[d - 1]);
+                instruct_view.append(plus1[d - 1]);
             else
-                addInstruct(plus3[d - 1]);
+                instruct_view.append(plus3[d - 1]);
         } else {
             if (sum < 10)
-                addInstruct(plus1[d - 1]);
+                instruct_view.append(plus1[d - 1]);
             else if (a >= 5 && sum < 15)
-                addInstruct(plus4[d - 6]);
+                instruct_view.append(plus4[d - 6]);
             else
-                addInstruct(plus3[d - 1]);
+                instruct_view.append(plus3[d - 1]);
         }
         // add operation to queue
         if (sum >= 10)
@@ -248,23 +265,23 @@ function minus(j, d, type) {
     if (type == 'show') {
         if (d < 5) {
             if (diff < 10)
-                addInstruct(minus3[d - 1]);
+                instruct_view.append(minus3[d - 1]);
             else if (a >= 5 && diff < 15)
-                addInstruct(minus2[d - 1]);
+                instruct_view.append(minus2[d - 1]);
             else
-                addInstruct(minus1[d - 1]);
+                instruct_view.append(minus1[d - 1]);
         } else if (d == 5) {
             if (diff >= 10)
-                addInstruct(minus1[d - 1]);
+                instruct_view.append(minus1[d - 1]);
             else
-                addInstruct(minus3[d - 1]);
+                instruct_view.append(minus3[d - 1]);
         } else {
             if (diff >= 10)
-                addInstruct(minus1[d - 1]);
+                instruct_view.append(minus1[d - 1]);
             else if (a < 5 && diff >= 5)
-                addInstruct(minus4[d - 6]);
+                instruct_view.append(minus4[d - 6]);
             else
-                addInstruct(minus3[d - 1]);
+                instruct_view.append(minus3[d - 1]);
         }
         // add operation to queue
         if (diff < 10)
@@ -336,9 +353,9 @@ function times(j, a, d, type, flag_replace) {
 
     if (type == 'show') {
         if (a > d)
-            addInstruct(times1[a - 1][d - 1]);
+            instruct_view.append(times1[a - 1][d - 1]);
         else
-            addInstruct(times1[d - 1][a - 1]);
+            instruct_view.append(times1[d - 1][a - 1]);
 
         // add operation to queue
         instruct_view.queue(function() {
@@ -423,7 +440,7 @@ function divide_by(j, a, b) {
     if (quo >= 10) {
         // Todo: avoid using true quotient
         q = Math.floor(quo / 10);
-        addInstruct(divide1[d - 1][q - 1]);
+        instruct_view.append(divide1[d - 1][q - 1]);
         instruct_view.queue(function() {
             minus(j, q * d);
             plus(j - 1, q);
@@ -432,7 +449,7 @@ function divide_by(j, a, b) {
     } else if (Math.floor(a * 10) > 0) {
         var reminder = x * 10 - quo * d;
 
-        addInstruct(divide2[d - 1][x - 1]);
+        instruct_view.append(divide2[d - 1][x - 1]);
 
         instruct_view.queue(function() {
             setNumber(j, quo);
@@ -445,9 +462,9 @@ function divide_by(j, a, b) {
     if (true_quo > quo) {
         // Underestimated quotient
         if (quo_diff * d <= 9)
-            addInstruct(divide1[d - 1][quo_diff - 1]);
+            instruct_view.append(divide1[d - 1][quo_diff - 1]);
         else
-            addInstruct('Repeat "' + divide1[d - 1][0] + '" by ' + quo_diff + ' times');
+            instruct_view.append('Repeat "' + divide1[d - 1][0] + '" by ' + quo_diff + ' times');
         instruct_view.queue(function() {
             minus(j + 1, quo_diff * d);
             plus(j, quo_diff);
@@ -457,8 +474,8 @@ function divide_by(j, a, b) {
         // Overestimated quotient
         quo_diff *= -1
         if (quo_diff > 1)
-        addInstruct('Repeat "' + divide4[d - 1] + '" by ' + quo_diff + ' times');
-        else addInstruct(divide4[d - 1]);
+        instruct_view.append('Repeat "' + divide4[d - 1] + '" by ' + quo_diff + ' times');
+        else instruct_view.append(divide4[d - 1]);
 
         instruct_view.queue(function() {
             plus(j + 1, quo_diff * d);
@@ -470,7 +487,7 @@ function divide_by(j, a, b) {
     // Long division
     if (true_quo > 0 && Math.log10(b - d / 10) > -digits) {
         let y = Math.round((b - d / 10) * Math.pow(10, digits)) / Math.pow(10, digits - 1);
-        addInstruct('Subtract by ' + y + ' * ' + true_quo + ' = ' + y * true_quo);
+        instruct_view.append('Subtract by ' + y + ' * ' + true_quo + ' = ' + y * true_quo);
 
         y *= true_quo;
         // for (let k=j+1; k<digits || Math.log10(y)>-digits; k++)
@@ -547,13 +564,17 @@ var minusflag = 0;
 
 function handleForm() {
     // check format (integer)
-    var a = $('form#demo input#a').val();
-    var b = $('form#demo input#b').val();
+    const a = $('form#demo input#a').val();
+    const b = $('form#demo input#b').val();
     if (!check_format(a) || !check_format(b)) {
         invalid();
-        return false;
+        return null;
     }
 
+    return {a: a, b: b, operator: $('form#demo select').val()};
+}
+
+function execute(a, b, operator, instruct_view) {
     // reset
     $('button:contains("Reset")').trigger('click');
 
@@ -563,7 +584,7 @@ function handleForm() {
     a = new_ab[0];
     b = new_ab[1];
 
-    switch ($('form#demo select').val()) {
+    switch (operator) {
         case 'plus':
         case 'minus':
 
@@ -590,10 +611,10 @@ function handleForm() {
     }
 
     // stage 2
-    switch ($('form#demo select').val()) {
+    switch (operator) {
         case 'plus':
             // show a on the right side of abacus
-            addInstruct('Populate abacus with left operand');
+            instruct_view.append('Populate abacus with left operand');
             var no = a.split('').reverse();
             for (var j = digits; j >= 1 && (digits - j) < no.length; j--) {
                 var d = no[digits - j] - '0';
@@ -603,12 +624,12 @@ function handleForm() {
             var no = b.split('');
             for (var j = digits - b.length + 1; j <= digits; j++) {
                 var d = no[j - digits - 1 + b.length] - '0';
-                plus(j, d, 'show');
+                plus(j, d, 'show', instruct_view);
             }
             break;
         case 'minus':
             // show a on the right side of abacus
-            addInstruct('Populate abacus with left operand');
+            instruct_view.append('Populate abacus with left operand');
             var no = a.split('').reverse();
             for (var j = digits; j >= 1 && (digits - j) < no.length; j--) {
                 var d = no[digits - j] - '0';
@@ -624,7 +645,7 @@ function handleForm() {
             instruct_view.queue(function() {
                 if (!minusflag) return;
                 // negative number
-                addInstruct('(負數)向左還一 10\'s complement');
+                instruct_view.append('(負數)向左還一 10\'s complement');
                 instruct_view.queue(function() {
                     for (var j = 1; j <= digits - 1; j++) setNumber(j, 9 - getNumber(j));
                     setNumber(j, 10 - getNumber(j));
@@ -635,7 +656,7 @@ function handleForm() {
             break;
         case 'times':
             // show a on the left side of abacus
-            addInstruct('Populate abacus with left operand');
+            instruct_view.append('Populate abacus with left operand');
             var no = a.split('');
             for (var j = 1; j <= digits && j <= no.length; j++) {
                 var d = no[j - 1];
@@ -662,7 +683,7 @@ function handleForm() {
             break;
         case 'divide by':
             // show a on the left side of abacus
-            addInstruct('Populate abacus with left operand');
+            instruct_view.append('Populate abacus with left operand');
             var no = a.split('');
             for (var j = 2; j <= digits && j - 1 <= no.length; j++) {
                 var d = no[j - 2];
@@ -686,9 +707,7 @@ function handleForm() {
 
     }  // end_switch
 
-    addInstruct('End of instructions.');
-    // prevent restart
-    return false;
+    instruct_view.append('End of instructions.');
 }
 
 const AbacusModel = Backbone.Model.extend({
@@ -699,6 +718,9 @@ const AbacusModel = Backbone.Model.extend({
 
 const ComputeModel = Backbone.Model.extend({
     defaults: {
+        left_operand: 0,
+        operator: 'plus',
+        right_operand: 1,
         speed: 0,
     },
 });
@@ -852,6 +874,7 @@ const SpeedView = Backbone.View.extend({
         this.model.set({speed: step});
     },
 });
+
 // demo button: demonstration
 const InputView = Backbone.View.extend({
     el: '#demo',
@@ -859,11 +882,19 @@ const InputView = Backbone.View.extend({
         'submit': 'onSubmit',
         'click button:contains("Reset")': 'onReset',
     },
+    initialize(options) {
+        this.instruct_view = options.instruct_view;
+        this.abacus_view = options.abacus_view;
+    },
     onSubmit() {
-        return handleForm();
+        var model = handleForm();
+        if(model) {
+            execute(model.a, model.b, model.operator, this.instruct_view);
+        }
+        return false;
     },
     onReset() {
-        instruct_view.reset();
+        this.instruct_view.reset();
         for (var j = 1; j <= digits; j++)  // from 3nd column to 11th column
             setNumber(j, 0);
     },
@@ -873,11 +904,15 @@ $(function() {
     const abacus_model = new AbacusModel();
     const precision_view = new PrecisionInputView({model: abacus_model});
 
+    const instruction_model = new InstructionModel({command: []});
+
+    const instruct_view = new InstructView({model: instruction_model});
+
     const compute_model = new ComputeModel();
     const speed_view = new SpeedView({model: compute_model});
-    const input_view = new InputView();
 
     const abacus_view = new AbacusView({model: abacus_model});
+    const input_view = new InputView({instruct_view: instruct_view, abacus_view: abacus_view});
 
     draw_abacus();
 
