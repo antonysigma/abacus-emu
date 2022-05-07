@@ -698,7 +698,6 @@ const AbacusView = Backbone.View.extend({
         //highlight all moved beads
         for (var i2 = Math.min(i1,i); i2 <= Math.max(i1,i); i2++) {
             this.$el.find('.f' + j + '_' + i2).addClass('active');
-            break;
         }
     },
     onClick(e) {
@@ -706,9 +705,13 @@ const AbacusView = Backbone.View.extend({
         const bead = $(e.currentTarget);
         const id = bead.attr('class');
 
-        id.match(/^[hf](\d+)_(\d+)$/i);
-        const j = parseInt(RegExp.$1);
-        const i = parseInt(RegExp.$2);
+        const matched = id.match(/[hf](\d+)_(\d+)/i);
+        if(! matched) {
+            return this;
+        }
+
+        const j = parseInt(matched.at(1));
+        const i = parseInt(matched.at(2));
         const type = id.charAt(0);
 
         const number = parseInt(this.$el.find('.b' + j).text());
