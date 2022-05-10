@@ -1,2 +1,1 @@
-# abacus-emu
-Chinese emulator to learn computer microprogramming
+lit/1_index.md

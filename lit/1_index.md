@@ -3,4 +3,5 @@ title: Abacus emulator
 author: Antony C Chan
 ---
 
-# Introduction
+# abacus-emu
+Chinese emulator to learn computer microprogramming
