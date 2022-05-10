@@ -28,11 +28,6 @@ pandoc_args += -t html5 -s --mathjax --toc
 pandoc_args += --toc-depth 2
 pandoc_args += --filter pandoc-bootstrap
 pandoc_args += -f markdown+multiline_tables+simple_tables
-
-# Load syntax definitions for languages that are not supported
-# by default. These XML files are in the format of the Kate editor.
-pandoc_args += --syntax-definition bootstrap/elm.xml
-pandoc_args += --syntax-definition bootstrap/pure.xml
 pandoc_args += --highlight-style tango
 
 # Any file in the `lit` directory that is not a Markdown source 
