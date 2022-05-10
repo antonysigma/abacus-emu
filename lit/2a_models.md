@@ -1,1 +1,1 @@
-# Frontend
+# Building the abacus graphical frontend
