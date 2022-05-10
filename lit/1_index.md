@@ -6,7 +6,7 @@ author: Antony C Chan
 # abacus-emu
 Chinese emulator to learn computer microprogramming
 
-## How to read this document
+# How to read this document
 
 This example is written in a style of literate programming (Knuth 1984).
 The (Javascript) source file is not presented in one go. Instead, we present the code fragments embed within the main text.

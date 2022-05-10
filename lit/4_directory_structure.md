@@ -15,10 +15,12 @@ Main page
 ```{.html file=src/main.html}
 <html>
 <head>
-<<instruction-list-template>>
+    <<abacuspad-template>>
+    <<instruction-list-template>>
 </head>
 
 <body>
+    <<precision-input-ui>>
 </body>
 </html>
 ```
