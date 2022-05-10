@@ -74,12 +74,11 @@ let languages = entangled.languages #
    case you may whish to change these settings.
  -}
 let syntax : entangled.Syntax =
-    { matchCodeStart       = "^[ ]*```[[:alpha:]]+"
-    , matchCodeEnd         = "^[ ]*```"
-    , extractLanguage      = "```([[:alpha:]]+)"
-    , extractReferenceName = "```[[:alpha:]]+[ ]+.*id=\"([^\"]*)\".*"
-    , extractFileName      = "```[[:alpha:]]+[ ]+.*file=\"([^\"]*)\".*" 
-    }
+    { matchCodeStart       = "```[ ]*{[^{}]*}"
+    , matchCodeEnd         = "```"
+    , extractLanguage      = "```[ ]*{\\.([^{} \t]+)[^{}]*}"
+    , extractReferenceName = "```[ ]*{[^{}]*#([^{} \t]*)[^{}]*}"
+    , extractFileName      = "```[ ]*{[^{}]*file=([^{} \t]*)[^{}]*}" }
     
 {- Database
    --------
