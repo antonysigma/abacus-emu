@@ -7,18 +7,17 @@ Main script
 import Backbone from 'backbone';
 import _ from 'underscore';
 
-<<models>>
+<<exception-model>>
+<<instruction-model>>
 ```
 
 Main page
-```{.html #main-html file=src/main.html}
+```{.html file=src/main.html}
 <html>
 <head>
 <<instruction-list-template>>
 </head>
-```
 
-```{.html #main-html}
 <body>
 </body>
 </html>
