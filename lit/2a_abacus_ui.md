@@ -77,7 +77,7 @@ Precision: <select id="precision">
 ```
 
 In the backend, the app listens on the user button click event, then update the `digits` value in the model.
-```{.javascript #precision-input}
+```{.javascript #precision-input-view}
 const PrecisionInputView = Backbone.View.extend({
     el: '#precision-bar',
     events: {
@@ -87,8 +87,107 @@ const PrecisionInputView = Backbone.View.extend({
         this.model = options.model;
     },
     onClick() {
-        digits = parseInt(this.$el.find('#precision').val());
+        var digits = parseInt(this.$el.find('#precision').val());
         this.model.set({digits: digits});
+    },
+});
+```
+
+## Abacus behavior
+
+```{.javascript #abacus-view}
+const AbacusView = Backbone.View.extend({
+    el: '#abacus_container',
+    events: {
+        'click td': 'onClick',
+    },
+    initialize(options) {
+        this.template = _.template($('#abacus-template').html());
+        this.model = options.model;
+        this.model.on('change', this.render, this);
+        this.render();
+    },
+```
+
+When the abacus is first rendered, reset everything as zero.
+```{.javascript #abacus-view}
+    render() {
+        this.$el.html(this.template({digits: this.model.get('digits')}));
+
+        // Last row is empty
+        this.$el.find('thead tr:last td').addClass('empty');
+
+        // top row is empty
+        this.$el.find('tfoot tr:first td').addClass('empty');
+        return this;
+    },
+```
+
+```{.javascript #abacus-view}
+    moveHeadBead(i, j, number) {
+        // find the index of original empty td
+        for (var i1 = 3; i1 >= 1; i1--) {
+            var this_bead = this.$el.find('.h' + j + '_' + i1);
+            if (this_bead.hasClass('empty')) {
+                this_bead.removeClass('empty');
+                break;
+            }
+        }
+        // update number
+        this.$el.find('.b' + j).text(number - (i - i1) * 5);
+
+        // highlight all moved beads
+        for (var i2 = Math.min(i1, i); i2 <= Math.max(i1, i); i2++) {
+            this.$el.find('.h' + j + '_' + i2).addClass('active');
+        }
+    },
+    moveFootBead(i, j, number) {
+        // find the index of original empty td
+        for (var i1 = 1; i1 <= 6; i1++) {
+            if (this.$el.find('.f' + j + '_' + i1).hasClass('empty')) break;
+        }
+        // update number
+        this.$el.find('.b' + j).text(number + i - i1);
+
+        // show this bead
+        this.$el.find('.f' + j + '_' + i1).removeClass('empty');
+        // highlight all moved beads
+        for (var i2 = Math.min(i1, i); i2 <= Math.max(i1, i); i2++) {
+            this.$el.find('.f' + j + '_' + i2).addClass('active');
+        }
+    },
+```
+
+When a bead is clicked, it indicates bead movement.
+```{.javascript #abacus-view}
+    onClick(e) {
+        // Identify the bead on the abacus
+        const bead = $(e.currentTarget);
+        const id = bead.attr('class');
+
+        const matched = id.match(/[hf](\d+)_(\d+)/i);
+        if (!matched) {
+            return this;
+        }
+
+        const j = parseInt(matched.at(1));
+        const i = parseInt(matched.at(2));
+        const type = id.charAt(0);
+
+        const number = parseInt(this.$el.find('.b' + j).text());
+
+        switch (type) {
+            case 'h':
+                // thead beads
+                this.moveHeadBead(i, j, number);
+                break;
+            case 'f':
+                // tfoot beads
+                this.moveFootBead(i, j, number);
+                break;
+        }
+        // this td becomes empty
+        bead.addClass('empty');
     },
 });
 ```

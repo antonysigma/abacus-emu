@@ -19,7 +19,7 @@ const InstructionModel = Backbone.Model.extend({
 ```
 
 The instruction list template is loaded into `View` object.
-```{.javascript #instruct-view}
+```{.javascript #instruction-list-view}
 const InstructView = Backbone.View.extend({
     el: '#instruction',
     initialize(options) {
@@ -31,14 +31,14 @@ const InstructView = Backbone.View.extend({
 ```
 
 Rendering is provided by Backbone.js by default.
-```{.javascript #instruct-view}
+```{.javascript #instruction-list-view}
     render() {
         this.$el.html(this.template(this.model.attributes));
     },
 ```
 
 
-```{.javascript #instruct-view}
+```{.javascript #instruction-list-view}
     append(str) {
         this.$el.queue(function() {
             $(this).append($('<li>' + str + '<\/li>').hide());

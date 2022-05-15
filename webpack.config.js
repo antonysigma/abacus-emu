@@ -8,7 +8,7 @@ const merge = require('webpack-merge');
 
 const webpackCommon = {
   entry: {
-    app: ['./templates/main']
+    app: ['./src/main']
   },
   module: {
     loaders: [
@@ -20,10 +20,10 @@ const webpackCommon = {
           presets: ['es2015']
         }
       },
-      {
-        test: /\.jst$/,
-        loader: 'underscore-template-loader'
-      },
+      //{
+      //  test: /\.jst$/,
+      //  loader: 'underscore-template-loader'
+      //},
       {
         test: /\.css$/,
         exclude: /node_modules/,
@@ -38,17 +38,17 @@ const webpackCommon = {
   },
   plugins: [
     //new ExtractTextPlugin('main.css'),
-    //new CopyWebpackPlugin([{
-    //  from: './templates/index.html',
-    //  to: './index.html'
-    //}]);
+    new CopyWebpackPlugin([{
+      from: './src/index.html',
+      to: './static/index.html'
+    }]),
     new webpack.ProvidePlugin({
       $: 'jquery',
       _: 'underscore',
     })
   ],
   resolve: {
-    root: path.join(__dirname, './templates')
+    root: path.join(__dirname, './src')
   },
   resolveLoader: {
     root: path.join(__dirname, './node_modules')
