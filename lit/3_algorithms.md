@@ -58,7 +58,7 @@ function plus(j, d, type, args) {
         // add operation to queue
         if (sum >= 10)
             instruct_view.queue(function() {
-                setNumber(j, sum - 10);
+                abacus_view.setNumber(j, sum - 10);
                 if (j - 1 >= 1)
                     plus(j - 1, 1);
                 else
@@ -67,20 +67,20 @@ function plus(j, d, type, args) {
             });
         else
             instruct_view.queue(function() {
-                setNumber(j, sum);
+                abacus_view.setNumber(j, sum);
                 $(this).dequeue();
             });
     }
     // do operation immediately
     else {
         if (sum >= 10) {
-            setNumber(j, sum - 10);
+            abacus_view.setNumber(j, sum - 10);
             if (j - 1 >= 1)
                 plus(j - 1, 1);
             else
                 overflow();
         } else
-            setNumber(j, sum);
+            abacus_view.setNumber(j, sum);
     }
 }
 ```
@@ -241,7 +241,7 @@ function execute(a, b, operator, args) {
             var no = a.split('').reverse();
             for (var j = precision; j >= 1 && (precision - j) < no.length; j--) {
                 var d = no[precision - j] - '0';
-                setNumber(j, d);
+                abacus_view.setNumber(j, d);
             }
 
             minusflag = 0;
@@ -255,8 +255,8 @@ function execute(a, b, operator, args) {
                 // negative number
                 instruct_view.append('(負數)向左還一 10\'s complement');
                 instruct_view.queue(function() {
-                    for (var j = 1; j <= precision - 1; j++) setNumber(j, 9 - getNumber(j));
-                    setNumber(j, 10 - getNumber(j));
+                    for (var j = 1; j <= precision - 1; j++) abacus_view.setNumber(j, 9 - getNumber(j));
+                    abacus_view.setNumber(j, 10 - getNumber(j));
                     $(this).dequeue();
                 });
                 $(this).dequeue();
@@ -268,7 +268,7 @@ function execute(a, b, operator, args) {
             var no = a.split('');
             for (var j = 1; j <= precision && j <= no.length; j++) {
                 var d = no[j - 1];
-                setNumber(j, d);
+                abacus_view.setNumber(j, d);
             }
 
             // times b digit by digit
@@ -295,7 +295,7 @@ function execute(a, b, operator, args) {
             var no = a.split('');
             for (var j = 2; j <= precision && j - 1 <= no.length; j++) {
                 var d = no[j - 2];
-                setNumber(j, d);
+                abacus_view.setNumber(j, d);
             }
 
 
