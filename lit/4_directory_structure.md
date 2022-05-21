@@ -8,6 +8,8 @@ import Backbone from 'backbone';
 import _ from 'underscore';
 
 <<check-format>>
+<<align-decimal>>
+<<check-overflow>>
 
 <<exception-model>>
 <<instruction-model>>
@@ -22,6 +24,7 @@ import _ from 'underscore';
 
 <<plus-commands>>
 <<plus-algorithm>>
+<<execute>>
 
 <<main>>
 ```
@@ -40,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     const speed_view = new SpeedView({model: compute_model});
 
     const abacus_view = new AbacusView({model: abacus_model});
-    const input_view = new InputView({instruct_view: instruct_view, abacus_view: abacus_view});
+    const input_view = new InputView({instruct_view: instruct_view, abacus_view: abacus_view, precision_model: abacus_model});
 });
 ```
 
@@ -62,6 +65,8 @@ Main page
 
     <div id="abacus_container"></div>
     <<user-input-ui>>
+
+    <div id="instruction"></div>
 </body>
 </html>
 ```

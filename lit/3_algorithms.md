@@ -25,11 +25,14 @@ const plus4 = [
 ```
 
 ```{.javascript #plus-algorithm}
-function plus(j, d, type, instruct_view) {
+function plus(j, d, type, args) {
     // skip zero digit
     if (d == 0) return;
     var a = getNumber(j);
     var sum = a + d;
+
+    const instruct_view = args.instruct_view;
+    const abacus_view = args.abacus_view;
 
     if (type == 'show') {
         if (d < 5) {
@@ -169,5 +172,191 @@ function minus(j, d, type) {
         } else
             setNumber(j, diff - 10);
     }
+}
+```
+
+## Overall handler
+
+```{.javascript #execute}
+function execute(a, b, operator, args) {
+    const instruct_view = args.instruct_view;
+    const abacus_view = args.abacus_view;
+    const precision = args.precision;
+
+    // Reset the abacus
+    abacus_view.reset();
+
+    // stage 1 processing
+    // align decimal points
+    var new_ab = align_decimals(a, b);
+    a = new_ab[0];
+    b = new_ab[1];
+
+    switch (operator) {
+        case 'plus':
+        case 'minus':
+
+            if (check_overflow(a, precision) || check_overflow(b, precision)) {
+                overflow();
+                return false;
+            }
+            break;
+        case 'times':
+        case 'divide':
+            // trailing zeros are meaningless
+            var re3 = new RegExp('^(\\d*[1-9])0*$', 'i');
+            a = a.replace(re3, function(x, y) {
+                return y;
+            });
+            b = b.replace(re3, function(x, y) {
+                return y;
+            });
+            // stop operation if number is too long
+            if (check_overflow(a, precision) || check_overflow(b, precision)) {
+                overflow();
+                return false;
+            }
+    }
+
+    // stage 2
+    switch (operator) {
+        case 'plus':
+            // show a on the right side of abacus
+            instruct_view.append('Populate abacus with left operand');
+            var no = a.split('').reverse();
+            for (var j = precision; j >= 1 && (precision - j) < no.length; j--) {
+                var d = no[precision - j] - '0';
+                abacus_view.setNumber(j, d);
+            }
+
+            var no = b.split('');
+            for (var j = precision - b.length + 1; j <= precision; j++) {
+                var d = no[j - precision - 1 + b.length] - '0';
+                plus(j, d, 'show', args);
+            }
+            break;
+        case 'minus':
+            // show a on the right side of abacus
+            instruct_view.append('Populate abacus with left operand');
+            var no = a.split('').reverse();
+            for (var j = precision; j >= 1 && (precision - j) < no.length; j--) {
+                var d = no[precision - j] - '0';
+                setNumber(j, d);
+            }
+
+            minusflag = 0;
+            var no = b.split('');
+            for (var j = precision - b.length + 1; j <= precision; j++) {
+                var d = no[j - precision - 1 + b.length] - '0';
+                minus(j, d, 'show');
+            }
+            instruct_view.queue(function() {
+                if (!minusflag) return;
+                // negative number
+                instruct_view.append('(負數)向左還一 10\'s complement');
+                instruct_view.queue(function() {
+                    for (var j = 1; j <= precision - 1; j++) setNumber(j, 9 - getNumber(j));
+                    setNumber(j, 10 - getNumber(j));
+                    $(this).dequeue();
+                });
+                $(this).dequeue();
+            });
+            break;
+        case 'times':
+            // show a on the left side of abacus
+            instruct_view.append('Populate abacus with left operand');
+            var no = a.split('');
+            for (var j = 1; j <= precision && j <= no.length; j++) {
+                var d = no[j - 1];
+                setNumber(j, d);
+            }
+
+            // times b digit by digit
+            var no = b.split('').reverse();
+            var a_i;
+            for (var j = a.length; j >= 1; j--) {
+                // take out last digit from a and remove it from the suanpan
+                a_i = getNumber(j);
+                if (a_i == 0) continue;
+                times(j, a_i, b[0], 'show', true);
+
+                for (i = 1; i < b.length; i++) {
+                    if (i + j > precision) {
+                        overflow();
+                        continue;
+                    }
+                    times(j + i, a_i, b[i], 'show');
+                }
+            }
+            break;
+        case 'divide by':
+            // show a on the left side of abacus
+            instruct_view.append('Populate abacus with left operand');
+            var no = a.split('');
+            for (var j = 2; j <= precision && j - 1 <= no.length; j++) {
+                var d = no[j - 2];
+                setNumber(j, d);
+            }
+
+
+            divide_by(2, parseFloat('0.' + a), parseFloat('0.' + b));
+
+            // var x = parseFloat('0.'+a);
+            // var d = parseFloae('0,'+b);
+            // for(var j = 2; j< precision - 1; j++) {
+            //    if (Math.log10(x) < -precision)
+            //        break;
+
+            //    divide_by(j,x,d);
+
+            //    var true_quo = x*10 - d;
+            //    x = x*10 - true_quo*d;
+            //}
+
+    }  // end_switch
+
+    instruct_view.append('End of instructions.');
+}
+```
+
+## Helper functions
+
+Addition and subtractions prefers a fixed point decimal datatype. Here, we align the decimal places to the operands:
+```{.javascript #align-decimal}
+function align_decimals(a, b) {
+    if (a.indexOf('.') == -1 && b.indexOf('.') == -1) return [a, b];
+    var afrac = (a.indexOf('.') == -1) ? 1 : (a.length - a.indexOf('.'));
+    var bfrac = (b.indexOf('.') == -1) ? 1 : (b.length - b.indexOf('.'));
+    if (afrac < bfrac) {
+        // append 0 to a
+        for (var i = afrac; i < bfrac; i++) a += '0';
+    } else {
+        // append 0 to b
+        for (var i = bfrac; i < afrac; i++) b += '0';
+    }
+    var re2 = new RegExp('^0*([1-9]?\\d*)\\.(\\d+)$', 'i');
+    a = a.replace(re2, function(x, y, z) {
+        return y + z;
+    });
+    b = b.replace(re2, function(x, y, z) {
+        return y + z;
+    });
+    // remove leading zeros
+    var re3 = new RegExp('^0*([1-9]\\d*)$', 'i');
+    a = a.replace(re3, function(x, y) {
+        return y;
+    });
+    b = b.replace(re3, function(x, y) {
+        return y;
+    });
+    return [a, b];
+}
+```
+
+Check whether the entered number is higher than the abacus precision limit.
+```{.javascript #check-overflow}
+function check_overflow(a, precision) {
+    if (a.length > precision) return true;
+    return false;
 }
 ```

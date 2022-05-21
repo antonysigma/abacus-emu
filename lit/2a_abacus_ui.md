@@ -92,7 +92,16 @@ const PrecisionInputView = Backbone.View.extend({
     },
 });
 ```
+## Digits on the abacus
 
+```{.javascript #digits-model}
+const AbacusDigitModel = Backbone.Model.extend({
+    defaults: {
+	previous: 0,
+	current: 0,
+    },
+});
+```
 ## Abacus behavior
 
 ```{.javascript #abacus-view}
@@ -121,10 +130,11 @@ When the abacus is first rendered, reset everything as zero.
         this.$el.find('tfoot tr:first td').addClass('empty');
         return this;
     },
+    reset() { return this.render(); },
 ```
 
 ```{.javascript #abacus-view}
-    moveHeadBead(i, j, number) {
+    moveHeadBead(i, j, digit) {
         // find the index of original empty td
         for (var i1 = 3; i1 >= 1; i1--) {
             var this_bead = this.$el.find('.h' + j + '_' + i1);
@@ -133,21 +143,25 @@ When the abacus is first rendered, reset everything as zero.
                 break;
             }
         }
-        // update number
-        this.$el.find('.b' + j).text(number - (i - i1) * 5);
+
+        // update the digit
+	const new_digit = digit - (i - i1) * 5;
+        this.$el.find('.b' + j).text(new_digit);
 
         // highlight all moved beads
         for (var i2 = Math.min(i1, i); i2 <= Math.max(i1, i); i2++) {
             this.$el.find('.h' + j + '_' + i2).addClass('active');
         }
     },
-    moveFootBead(i, j, number) {
+    moveFootBead(i, j, digit) {
         // find the index of original empty td
         for (var i1 = 1; i1 <= 6; i1++) {
             if (this.$el.find('.f' + j + '_' + i1).hasClass('empty')) break;
         }
-        // update number
-        this.$el.find('.b' + j).text(number + i - i1);
+
+        // update the digit
+	const new_digit = digit + i - i1;
+        this.$el.find('.b' + j).text(new_digit);
 
         // show this bead
         this.$el.find('.f' + j + '_' + i1).removeClass('empty');
@@ -188,6 +202,30 @@ When a bead is clicked, it indicates bead movement.
         }
         // this td becomes empty
         bead.addClass('empty');
+    },
+    setNumber(j, d) {
+        const k = Math.floor(d / 5);  // thead
+        const i = d - 5 * k + 1;      // tfoot
+
+    switch (k) {
+        case 3:
+            this.$el.find('.h' + j + '_1').trigger('click');
+            this.$el.find('.f' + j + '_6').trigger('click');
+            break;
+        case 2:
+            this.$el.find('.h' + j + '_1').trigger('click');
+            this.$el.find('.f' + j + '_' + i).trigger('click');
+            break;
+        case 1:
+            this.$el.find('.h' + j + '_2').trigger('click');
+            this.$el.find('.f' + j + '_' + i).trigger('click');
+            break;
+        default:
+            this.$el.find('.h' + j + '_3').trigger('click');
+            this.$el.find('.f' + j + '_' + i).trigger('click');
+    }
+
+    if (d > 15) overflow();
     },
 });
 ```

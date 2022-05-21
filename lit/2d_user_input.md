@@ -17,7 +17,7 @@ We start with the graphical user interface with a reset button and submit button
 
 Any binary operation starts with a left operand:
 ```{.html #left-operand}
-<input maxlength="13" id="a" />
+<input maxlength="13" id="a" value="123"/>
 ```
 
 Following the operator
@@ -32,7 +32,7 @@ Following the operator
 
 And the right operand.
 ```{.html #right-operand}
-<input maxlength="13" id="b" />
+<input maxlength="13" id="b" value="321"/>
 ```
 
 The corresponding model is given as
@@ -57,11 +57,16 @@ const InputView = Backbone.View.extend({
     initialize(options) {
         this.instruct_view = options.instruct_view;
         this.abacus_view = options.abacus_view;
+	this.precision_model = options.precision_model;
     },
     onSubmit() {
         const model = this.handleForm();
         if(model) {
-            execute(model.a, model.b, model.operator, this.instruct_view);
+            execute(model.a, model.b, model.operator, {
+                instruct_view: this.instruct_view,
+		abacus_view: this.abacus_view,
+                precision: this.precision_model.get('digits'),
+            });
         }
         return false;
     },
@@ -78,8 +83,8 @@ const InputView = Backbone.View.extend({
     },
     onReset() {
         this.instruct_view.reset();
-        for (var j = 1; j <= digits; j++)  // from 3nd column to 11th column
-            setNumber(j, 0);
+	this.abacus_view.render();
+	return false;
     },
 });
 ```

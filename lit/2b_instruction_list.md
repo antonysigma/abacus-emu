@@ -45,10 +45,11 @@ Rendering is provided by Backbone.js by default.
 
             $(this).dequeue();
         });
-        var self = this.$el;
+        const self = this.$el;
+	const time_delta = this.model.get('speed');
         this.$el.queue(function() {
             $(this).scrollTop($(this)[0].scrollHeight);
-            $(this).find('li:last').fadeIn(step, function() {
+            $(this).find('li:last').fadeIn(time_delta, function() {
                 // unlabel all beads
                 $('thead td, tfoot td').removeClass('active');
 
