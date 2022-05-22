@@ -38,10 +38,10 @@ const webpackCommon = {
   },
   plugins: [
     //new ExtractTextPlugin('main.css'),
-    new CopyWebpackPlugin([{
-      from: './src/index.html',
-      to: './static/index.html'
-    }]),
+    //new CopyWebpackPlugin([{
+    //  from: './src/index.html',
+    //  to: './static/index.html'
+    //}]),
     new webpack.ProvidePlugin({
       $: 'jquery',
       _: 'underscore',

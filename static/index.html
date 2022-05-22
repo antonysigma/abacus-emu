@@ -1,106 +1,106 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- ~\~ language=HTML filename=static/index.html -->
+<!-- ~\~ begin <<lit/4_directory_structure.md|static/index.html>>[0] -->
+<html>
 <head>
-  <meta name="generator" content=
-  "HTML Tidy for Linux/x86 (vers 25 March 2009), see www.w3.org" />
-  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+    <title>Abacus Emulator</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" href="abacus.css" />
+    <script type="text/javascript" src="main.js"></script>
 
-  <title>Abacus Emulator</title>
-  <link rel="stylesheet" type="text/css" href="abacus.css" />
-</script>
-  <script type="text/javascript" src="main.js">
-</script>
-<script id="instruction-template" type="text/template">
-<% _.forEach(command, function (cmd) { %>
-    <li><%= cmd %></li>
-<% }) %>
-</script>
-
-<script id="abacus-template" type="text/template">
-<table class="abacuspad" cellspacing="0">
-<thead>
-<% _.forEach(_.range(1, 4), function (i) { %>
-    <tr>
-<% _.forEach(_.range(1, digits + 1), function (j) { %>
-    <td class="h<%= j %>_<%= i %>">&#xFEFF;</td>
-<% }) %>
-    </tr>
-<% }); %>
-</thead>
-<tbody>
-    <tr>
-<% _.forEach(_.range(1, digits + 1), function (j) { %>
-    <td class="b<%= j %>">0</td>
-<% }) %>
-    </tr>
-</tbody>
-<tfoot>
-<% _.forEach(_.range(1, 7), function (i) { %>
-    <tr>
-<% _.forEach(_.range(1, digits + 1), function (j) { %>
-    <td class="f<%= j %>_<%= i %>">&#xFEFF;</td>
-<% }) %>
-    </tr>
-<% }); %>
-</tfoot>
-</table>
-</script>
+    <!-- ~\~ begin <<lit/2a_abacus_ui.md|abacuspad-template>>[0] -->
+    <script id="abacus-template" type="text/template">
+    <table class="abacuspad" cellspacing="0">
+        <!-- ~\~ begin <<lit/2a_abacus_ui.md|top-bead>>[0] -->
+        <thead>
+        <% _.forEach(_.range(1, 4), function (i) { %>
+            <tr>
+        <% _.forEach(_.range(1, digits + 1), function (j) { %>
+            <td class="h<%= j %>_<%= i %>">&#xFEFF;</td>
+        <% }) %>
+            </tr>
+        <% }); %>
+        </thead>
+        <!-- ~\~ end -->
+        <!-- ~\~ begin <<lit/2a_abacus_ui.md|bead-separator>>[0] -->
+        <tbody>
+            <tr>
+        <% _.forEach(_.range(1, digits + 1), function (j) { %>
+            <td class="b<%= j %>">0</td>
+        <% }) %>
+            </tr>
+        </tbody>
+        <!-- ~\~ end -->
+        <!-- ~\~ begin <<lit/2a_abacus_ui.md|bottom-bead>>[0] -->
+        <tfoot>
+        <% _.forEach(_.range(1, 7), function (i) { %>
+            <tr>
+        <% _.forEach(_.range(1, digits + 1), function (j) { %>
+            <td class="f<%= j %>_<%= i %>">&#xFEFF;</td>
+        <% }) %>
+            </tr>
+        <% }); %>
+        </tfoot>
+        <!-- ~\~ end -->
+    </table>
+    </script>
+    <!-- ~\~ end -->
+    <!-- ~\~ begin <<lit/2b_instruction_list.md|instruction-list-template>>[0] -->
+    <script id="instruction-template" type="text/template">
+    <% _.forEach(command, function (cmd) { %>
+        <li><%= cmd %></li>
+    <% }) %>
+    </script>
+    <!-- ~\~ end -->
 </head>
 
 <body>
-  <h1>Chinese Abacus Emulator</h1>
+    <!-- ~\~ begin <<lit/2d_user_input.md|speed-ui>>[0] -->
+    <div id="speed-bar">
+      <input type="radio" name="speed" id="slow" value="3000" />
+      <label for="slow">Slow</label>
+      <input type="radio" id="fast" name="speed" value="500" />
+      <label for="fast">Fast</label>
+      <input type="radio" id="insane" name="speed" value="70" checked="checked" />
+      <label for="fast">Insane</label>
+    </div>
+    <!-- ~\~ end -->
+    <!-- ~\~ begin <<lit/2a_abacus_ui.md|precision-input-ui>>[0] -->
+    <div id="precision-bar">
+    Precision: <select id="precision">
+    <option>7</option>
 
-  <div id="speed-bar">  <input type="radio" name="speed" id="slow" value="3000" />
-  <label for="slow">Slow</label><input type="radio" id="fast" name="speed"
-  value="500" /><label for="fast">Fast</label><input type="radio" id="insane" name="speed"
-  value="70" checked="checked" /><label for="fast">Insane</label></div>
-  <div id="precision-bar">
-  Precision: <select id="precision">
-    <option>
-      7
-    </option>
+    <option selected="selected">13</option>
 
-    <option selected="selected">
-      13
-    </option>
+    <option>20</option>
+    </select>
+    <button>Change</button></div>
+    <!-- ~\~ end -->
 
-    <option>
-      20
-    </option>
-  </select><button>Change</button></div>
+    <div id="abacus_container"></div>
+    <!-- ~\~ begin <<lit/2d_user_input.md|user-input-ui>>[0] -->
+    <form action="#" id="demo" name="demo">
+      <button>Reset</button>
+      <p>
+        <!-- ~\~ begin <<lit/2d_user_input.md|left-operand>>[0] -->
+        <input maxlength="13" id="a" value="123"/>
+        <!-- ~\~ end -->
+        <!-- ~\~ begin <<lit/2d_user_input.md|operator>>[0] -->
+        <select>
+          <option>plus</option>
+          <option>minus</option>
+          <option>times</option>
+          <option>divide by</option>
+        </select>
+        <!-- ~\~ end -->
+        <!-- ~\~ begin <<lit/2d_user_input.md|right-operand>>[0] -->
+        <input maxlength="13" id="b" value="321"/>
+        <!-- ~\~ end -->
+        <input value="demo" type="submit" />
+      </p>
+    </form>
+    <!-- ~\~ end -->
 
-  <div id="abacus_container"></div>
-  <div id="abacus_container2"></div>
-
-  <form action="#" id="demo" name="demo">
-<button>Reset</button>
-    <p><input maxlength="13" id="a" /> <select>
-      <option>
-        plus
-      </option>
-
-      <option>
-        minus
-      </option>
-
-      <option>
-        times
-      </option>
-      <option>divide by</option>
-    </select> <input maxlength="13" id="b" /> <input value="demo" type=
-    "submit" /><br />
-    <span id="invalid">The number is invalid.</span> <span id="overflow">Number
-    overflow</span></p>
-
-  </form>
-
-  <div class="instruction-block">
-    <p>Instructions</p>
-    <ol id="instruction"></ol>
-  </div>
-
+    <div id="instruction"></div>
 </body>
 </html>
-
+<!-- ~\~ end -->

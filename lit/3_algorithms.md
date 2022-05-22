@@ -58,20 +58,25 @@ function plus(j, d, args) {
                 instruct_view.append(plus3[d - 1]);
         }
         // add operation to queue
-        if (sum >= 10)
+        if (sum >= 10) {
             instruct_view.queue(function() {
                 abacus_view.setNumber(j, sum - 10);
-                if (j - 1 >= 1)
+                if (j - 1 >= 1) {
+                    // Carry-out
+                    var new_args = args;
+                    args.show_stroke = false;
                     plus(j - 1, 1, args);
-                else
+                } else {
                     overflow();
+                }
                 $(this).dequeue();
             });
-        else
+        } else {
             instruct_view.queue(function() {
                 abacus_view.setNumber(j, sum);
                 $(this).dequeue();
             });
+        }
     }
     // do operation immediately
     else {

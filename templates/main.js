@@ -212,7 +212,7 @@ function plus(j, d, type, instruct_view) {
         // add operation to queue
         if (sum >= 10)
             instruct_view.queue(function() {
-                setNumber(j, sum - 10);
+                abacus_view.setNumber(j, sum - 10);
                 if (j - 1 >= 1)
                     plus(j - 1, 1);
                 else
@@ -221,20 +221,20 @@ function plus(j, d, type, instruct_view) {
             });
         else
             instruct_view.queue(function() {
-                setNumber(j, sum);
+                abacus_view.setNumber(j, sum);
                 $(this).dequeue();
             });
     }
     // do operation immediately
     else {
         if (sum >= 10) {
-            setNumber(j, sum - 10);
+            abacus_view.setNumber(j, sum - 10);
             if (j - 1 >= 1)
                 plus(j - 1, 1);
             else
                 overflow();
         } else
-            setNumber(j, sum);
+            abacus_view.setNumber(j, sum);
     }
 }
 //============== BASIC ARITHMATICS (MINUS) ============
@@ -286,7 +286,7 @@ function minus(j, d, type) {
         // add operation to queue
         if (diff < 10)
             instruct_view.queue(function() {
-                setNumber(j, diff);
+                abacus_view.setNumber(j, diff);
                 if (j - 1 >= 1)
                     minus(j - 1, 1);
                 else {
@@ -298,14 +298,14 @@ function minus(j, d, type) {
             });
         else
             instruct_view.queue(function() {
-                setNumber(j, diff - 10);
+                abacus_view.setNumber(j, diff - 10);
                 $(this).dequeue();
             });
     }
     // do operation immediately
     else {
         if (diff < 10) {
-            setNumber(j, diff);
+            abacus_view.setNumber(j, diff);
             if (j - 1 >= 1)
                 minus(j - 1, 1);
             else {
@@ -314,7 +314,7 @@ function minus(j, d, type) {
                 minusflag = 1;
             }
         } else
-            setNumber(j, diff - 10);
+            abacus_view.setNumber(j, diff - 10);
     }
 }
 //============== BASIC ARITHMATICS (TIMES) ============
@@ -361,7 +361,7 @@ function times(j, a, d, type, flag_replace) {
         instruct_view.queue(function() {
             if (j + 1 <= digits) {
                 if (flag_replace)  // overwrite the original digit
-                    setNumber(j, Math.floor(prod / 10));
+                    abacus_view.setNumber(j, Math.floor(prod / 10));
                 else
                     plus(j, Math.floor(prod / 10));
                 plus(j + 1, prod % 10);
@@ -452,8 +452,8 @@ function divide_by(j, a, b) {
         instruct_view.append(divide2[d - 1][x - 1]);
 
         instruct_view.queue(function() {
-            setNumber(j, quo);
-            setNumber(j + 1, reminder + getNumber(j + 1));
+            abacus_view.setNumber(j, quo);
+            abacus_view.setNumber(j + 1, reminder + getNumber(j + 1));
             $(this).dequeue();
         });
     }
@@ -618,7 +618,7 @@ function execute(a, b, operator, instruct_view) {
             var no = a.split('').reverse();
             for (var j = digits; j >= 1 && (digits - j) < no.length; j--) {
                 var d = no[digits - j] - '0';
-                setNumber(j, d);
+                abacus_view.setNumber(j, d);
             }
 
             var no = b.split('');
@@ -633,7 +633,7 @@ function execute(a, b, operator, instruct_view) {
             var no = a.split('').reverse();
             for (var j = digits; j >= 1 && (digits - j) < no.length; j--) {
                 var d = no[digits - j] - '0';
-                setNumber(j, d);
+                abacus_view.setNumber(j, d);
             }
 
             minusflag = 0;
@@ -647,8 +647,8 @@ function execute(a, b, operator, instruct_view) {
                 // negative number
                 instruct_view.append('(負數)向左還一 10\'s complement');
                 instruct_view.queue(function() {
-                    for (var j = 1; j <= digits - 1; j++) setNumber(j, 9 - getNumber(j));
-                    setNumber(j, 10 - getNumber(j));
+                    for (var j = 1; j <= digits - 1; j++) abacus_view.setNumber(j, 9 - getNumber(j));
+                    abacus_view.setNumber(j, 10 - getNumber(j));
                     $(this).dequeue();
                 });
                 $(this).dequeue();
@@ -660,7 +660,7 @@ function execute(a, b, operator, instruct_view) {
             var no = a.split('');
             for (var j = 1; j <= digits && j <= no.length; j++) {
                 var d = no[j - 1];
-                setNumber(j, d);
+                abacus_view.setNumber(j, d);
             }
 
             // times b digit by digit
@@ -687,7 +687,7 @@ function execute(a, b, operator, instruct_view) {
             var no = a.split('');
             for (var j = 2; j <= digits && j - 1 <= no.length; j++) {
                 var d = no[j - 2];
-                setNumber(j, d);
+                abacus_view.setNumber(j, d);
             }
 
 
@@ -896,7 +896,7 @@ const InputView = Backbone.View.extend({
     onReset() {
         this.instruct_view.reset();
         for (var j = 1; j <= digits; j++)  // from 3nd column to 11th column
-            setNumber(j, 0);
+            abacus_view.setNumber(j, 0);
     },
 });
 
@@ -918,5 +918,5 @@ $(function() {
 
     // Set 12345 as default
     for (var j = 3; j <= 11; j++)  // from 3nd column to 11th column
-        setNumber(j, j - 2);
+        abacus_view.setNumber(j, j - 2);
 });
