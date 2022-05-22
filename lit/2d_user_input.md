@@ -66,6 +66,7 @@ const InputView = Backbone.View.extend({
                 instruct_view: this.instruct_view,
 		abacus_view: this.abacus_view,
                 precision: this.precision_model.get('digits'),
+                show_stroke: true,
             });
         }
         return false;

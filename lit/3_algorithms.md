@@ -25,16 +25,18 @@ const plus4 = [
 ```
 
 ```{.javascript #plus-algorithm}
-function plus(j, d, type, args) {
-    // skip zero digit
-    if (d == 0) return;
-    var a = getNumber(j);
-    var sum = a + d;
-
+function plus(j, d, args) {
     const instruct_view = args.instruct_view;
     const abacus_view = args.abacus_view;
+    const show_stroke = args.show_stroke;
 
-    if (type == 'show') {
+
+    // skip zero digit
+    if (d == 0) return;
+    var a = abacus_view.getNumber(j);
+    var sum = a + d;
+
+    if (show_stroke) {
         if (d < 5) {
             if (sum >= 10)
                 instruct_view.append(plus3[d - 1]);
@@ -60,7 +62,7 @@ function plus(j, d, type, args) {
             instruct_view.queue(function() {
                 abacus_view.setNumber(j, sum - 10);
                 if (j - 1 >= 1)
-                    plus(j - 1, 1);
+                    plus(j - 1, 1, args);
                 else
                     overflow();
                 $(this).dequeue();
@@ -76,7 +78,7 @@ function plus(j, d, type, args) {
         if (sum >= 10) {
             abacus_view.setNumber(j, sum - 10);
             if (j - 1 >= 1)
-                plus(j - 1, 1);
+                plus(j - 1, 1, args);
             else
                 overflow();
         } else
@@ -232,7 +234,7 @@ function execute(a, b, operator, args) {
             var no = b.split('');
             for (var j = precision - b.length + 1; j <= precision; j++) {
                 var d = no[j - precision - 1 + b.length] - '0';
-                plus(j, d, 'show', args);
+                plus(j, d, args);
             }
             break;
         case 'minus':
@@ -248,7 +250,7 @@ function execute(a, b, operator, args) {
             var no = b.split('');
             for (var j = precision - b.length + 1; j <= precision; j++) {
                 var d = no[j - precision - 1 + b.length] - '0';
-                minus(j, d, 'show');
+                minus(j, d, args);
             }
             instruct_view.queue(function() {
                 if (!minusflag) return;

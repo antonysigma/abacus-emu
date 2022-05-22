@@ -203,7 +203,10 @@ When a bead is clicked, it indicates bead movement.
         // this td becomes empty
         bead.addClass('empty');
     },
-    abacus_view.setNumber(j, d) {
+    getNumber(j) {
+        return parseInt(this.$el.find('.b' + j).text());
+    },
+    setNumber(j, d) {
         const k = Math.floor(d / 5);  // thead
         const i = d - 5 * k + 1;      // tfoot
 

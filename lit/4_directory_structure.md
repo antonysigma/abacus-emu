@@ -48,10 +48,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
 ```
 
 Main page
-```{.html file=src/index.html}
+```{.html file=static/index.html}
 <html>
 <head>
     <title>Abacus Emulator</title>
+    <meta charset="utf-8"/>
     <link rel="stylesheet" type="text/css" href="abacus.css" />
     <script type="text/javascript" src="main.js"></script>
 
