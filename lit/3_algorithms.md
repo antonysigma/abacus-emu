@@ -97,7 +97,7 @@ function plus(j, d, args) {
 There are two possible ways to compute subtraction. One way is to use 10's complement to invert the digits of the number.
 Another ways is to implement the direct subtraction algorithm. This is equivalent to the rivary between CISC and RISC in computer engineering history.
 
-```{.javascript #minus-command}
+```{.javascript #minus-commands}
 var minus1 = [
     '一去一 minus 1', '二去二 minus 2', '三去三 minus 3', '四去四 minus 4', '五去五 minus 5',
     '六去六 minus 6', '七去七 minus 1', '八去八 minus 8', '九去九 minus 9'
@@ -119,13 +119,17 @@ var minus4 = [
 ```
 
 ```{.javascript #minus-algorithm}
-function minus(j, d, type) {
+function minus(j, d, args) {
+    const instruct_view = args.instruct_view;
+    const abacus_view = args.abacus_view;
+    const show_stroke = args.show_stroke;
+
     // skip zero digit
     if (d == 0) return;
-    var a = getNumber(j);
+    var a = abacus_view.getNumber(j);
     var diff = a - d + 10;
 
-    if (type == 'show') {
+    if (show_stroke) {
         if (d < 5) {
             if (diff < 10)
                 instruct_view.append(minus3[d - 1]);
@@ -149,19 +153,19 @@ function minus(j, d, type) {
         // add operation to queue
         if (diff < 10)
             instruct_view.queue(function() {
-                setNumber(j, diff);
+                abacus_view.setNumber(j, diff);
                 if (j - 1 >= 1)
-                    minus(j - 1, 1);
+                    minus(j - 1, 1, args);
                 else {
                     overflow();
                     // special because the number can be restored
-                    minusflag = 1;
+                    abacus_view.minus_flag = true;
                 }
                 $(this).dequeue();
             });
         else
             instruct_view.queue(function() {
-                setNumber(j, diff - 10);
+                abacus_view.setNumber(j, diff - 10);
                 $(this).dequeue();
             });
     }
@@ -170,11 +174,11 @@ function minus(j, d, type) {
         if (diff < 10) {
             setNumber(j, diff);
             if (j - 1 >= 1)
-                minus(j - 1, 1);
+                minus(j - 1, 1, args);
             else {
                 overflow();
                 // special because the number can be restored
-                minusflag = 1;
+                abacus_view.minusflag = true;
             }
         } else
             setNumber(j, diff - 10);
@@ -251,14 +255,14 @@ function execute(a, b, operator, args) {
                 abacus_view.setNumber(j, d);
             }
 
-            minusflag = 0;
+            abacus_view.minusflag = false;
             var no = b.split('');
             for (var j = precision - b.length + 1; j <= precision; j++) {
                 var d = no[j - precision - 1 + b.length] - '0';
                 minus(j, d, args);
             }
             instruct_view.queue(function() {
-                if (!minusflag) return;
+                if (!abacus_view.minus_flag) return;
                 // negative number
                 instruct_view.append('(負數)向左還一 10\'s complement');
                 instruct_view.queue(function() {

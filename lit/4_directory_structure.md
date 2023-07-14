@@ -24,6 +24,8 @@ import _ from 'underscore';
 
 <<plus-commands>>
 <<plus-algorithm>>
+<<minus-commands>>
+<<minus-algorithm>>
 <<execute>>
 
 <<main>>

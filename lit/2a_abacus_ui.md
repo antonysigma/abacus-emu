@@ -118,6 +118,11 @@ const AbacusView = Backbone.View.extend({
     },
 ```
 
+A boolean state to indicate whether the value is signed or unsigned (aka 10's complement).
+```{.javascript #abacus-view}
+    minusflag: false,
+```
+
 When the abacus is first rendered, reset everything as zero.
 ```{.javascript #abacus-view}
     render() {
