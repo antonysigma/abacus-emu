@@ -1,4 +1,4 @@
-## Instruction list
+## Logging
 
 We visualize the compute instructions as list:
 ```{.html #instruction-list-template}
