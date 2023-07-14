@@ -56,8 +56,8 @@ const minus4 = [
 
 ```
 
-Multiplication table, unlike others, are taught in multiple culture world wide
-in primary schools. Unlike the addition and subtraction instruction set, the
+Multiplication table, unlike others, are taught in both eastern and western
+cultures. Unlike the addition and subtraction instruction set, the
 multiplication table doesn't require an abacus to function.
 
 ```{.javascript #multiply-commands}

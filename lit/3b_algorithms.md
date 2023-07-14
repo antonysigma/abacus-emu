@@ -143,6 +143,52 @@ function minus(j, d, args) {
 }
 ```
 
+## Multiplication
+
+Multiplication algorithms, compared to additions, is more like a
+macro/subroutine. We iterate over the digits in the right operand, compute the
+product using the lookup table, and then invoke the `plus()` function to
+accumulate the computed values.
+
+```{.javascript #multiply-algorithm}
+function
+times(j, a, d, args) {
+    const abacus_view = args.abacus_view;
+    const instruct_view = args.instruct_view;
+    const show_stroke = args.show_stroke;
+    const flag_replace = args.flag_replace;
+
+    //skip zero digit
+    if (d == 0 || a == 0) return;
+    var prod = a * d;
+
+    if (show_stroke) {
+        if (a > d) {
+            instruct_view.append(times1[a - 1][d - 1]);
+        } else {
+            instruct_view.append(times1[d - 1][a - 1]);
+        }
+
+        //add operation to queue
+        const digits = abacus_view.model.get('digits');
+        instruct_view.queue(function () {
+            if (j + 1 <= digits) {
+                if (flag_replace) {
+                    //overwrite the original digit
+                    abacus_view.setNumber(j, Math.floor(prod / 10));
+                } else {
+                    plus(j, Math.floor(prod / 10), args);
+                }
+                plus(j + 1, prod % 10, args);
+            } else {
+                overflow();
+            }
+            $(this).dequeue();
+        });
+    }
+}
+```
+
 ## Overall handler
 
 ```{.javascript #execute}
@@ -241,19 +287,28 @@ function execute(a, b, operator, args) {
 
             // times b digit by digit
             var no = b.split('').reverse();
-            var a_i;
             for (var j = a.length; j >= 1; j--) {
                 // take out last digit from a and remove it from the suanpan
-                a_i = getNumber(j);
+                const a_i = abacus_view.getNumber(j);
                 if (a_i == 0) continue;
-                times(j, a_i, b[0], 'show', true);
+                times(j, a_i, b[0], {
+                    show_stroke: true,
+                    flag_replace: true,
+                    abacus_view: abacus_view,
+                    instruct_view: instruct_view,
+                });
 
-                for (i = 1; i < b.length; i++) {
+                for (var i = 1; i < b.length; i++) {
                     if (i + j > precision) {
                         overflow();
                         continue;
                     }
-                    times(j + i, a_i, b[i], 'show');
+                    times(j + i, a_i, b[i], {
+                        show_stroke: true,
+                        flag_replace: true,
+                        abacus_view: abacus_view,
+                        instruct_view: instruct_view,
+                    });
                 }
             }
             break;
