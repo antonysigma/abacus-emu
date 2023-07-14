@@ -13,3 +13,18 @@ The (Javascript) source file is not presented in one go. Instead, we present the
 
 The document pre-processor application, `entangled`, will parse a system of code fragment references, known as `noweb` (Ramsey 1994), to assemble the machine-readable source files.
 Inside source fragments you may encounter a line with `<<...>>` marks, which is a reference to another code fragment in the article.
+
+# Build instruction
+
+```
+Usage:
+  make <target>
+
+Targets:
+  help        Display this help
+  all         Download dependencies and build everything
+  depend      Download Nodejs dependencies
+  debug       Debug mode, monitor file changes and then compile automatically
+  build       Release mode, optimize and minimize the Javascript file
+  site        Build documentation
+```
