@@ -6,6 +6,8 @@ author: Antony C Chan
 # abacus-emu
 Chinese emulator to learn computer microprogramming
 
+Demo: https://antonysigma.github.io/_static/abacus-bin/
+
 # How to read this document
 
 This example is written in a style of literate programming (Knuth 1984).
