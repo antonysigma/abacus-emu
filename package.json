@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build": "esbuild src/main.js --bundle --minify --sourcemap --outdir=static --target=es6",
-    "lint": "eslint app",
+    "lint": "eslint src/main.js",
     "watch": "esbuild src/main.js --bundle --watch --outdir=static"
   },
   "dependencies": {
