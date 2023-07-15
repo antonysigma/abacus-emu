@@ -41,9 +41,9 @@ function plus(j, d, args) {
                 abacus_view.setNumber(j, sum - 10);
                 if (j - 1 >= 1) {
                     // Carry-out
-                    var new_args = args;
-                    args.show_stroke = false;
-                    plus(j - 1, 1, args);
+                    let new_args = args;
+                    new_args.show_stroke = false;
+                    plus(j - 1, 1, new_args);
                 } else {
                     overflow();
                 }
@@ -129,7 +129,7 @@ function minus(j, d, args) {
     // do operation immediately
     else {
         if (diff < 10) {
-            setNumber(j, diff);
+            abacus_view.setNumber(j, diff);
             if (j - 1 >= 1)
                 minus(j - 1, 1, args);
             else {
@@ -138,7 +138,7 @@ function minus(j, d, args) {
                 abacus_view.minusflag = true;
             }
         } else
-            setNumber(j, diff - 10);
+            abacus_view.setNumber(j, diff - 10);
     }
 }
 ```
@@ -237,16 +237,20 @@ function execute(a, b, operator, args) {
         case 'plus':
             // show a on the right side of abacus
             instruct_view.append('Populate abacus with left operand');
-            var no = a.split('').reverse();
-            for (var j = precision; j >= 1 && (precision - j) < no.length; j--) {
-                var d = no[precision - j] - '0';
-                abacus_view.setNumber(j, d);
+            {
+                const no = a.split('').reverse();
+                for (var j = precision; j >= 1 && (precision - j) < no.length; j--) {
+                    const d = no[precision - j] - '0';
+                    abacus_view.setNumber(j, d);
+                }
             }
 
-            var no = b.split('');
-            for (var j = precision - b.length + 1; j <= precision; j++) {
-                var d = no[j - precision - 1 + b.length] - '0';
-                plus(j, d, args);
+            {
+                const no = b.split('');
+                for (var j = precision - b.length + 1; j <= precision; j++) {
+                    const d = no[j - precision - 1 + b.length] - '0';
+                    plus(j, d, args);
+                }
             }
             break;
         case 'minus':
@@ -259,18 +263,22 @@ function execute(a, b, operator, args) {
             }
 
             abacus_view.minusflag = false;
-            var no = b.split('');
-            for (var j = precision - b.length + 1; j <= precision; j++) {
-                var d = no[j - precision - 1 + b.length] - '0';
-                minus(j, d, args);
+            {
+                const no = b.split('');
+                for (var j = precision - b.length + 1; j <= precision; j++) {
+                    const d = no[j - precision - 1 + b.length] - '0';
+                    minus(j, d, args);
+                }
             }
             instruct_view.queue(function() {
                 if (!abacus_view.minus_flag) return;
                 // negative number
                 instruct_view.append('(負數)向左還一 10\'s complement');
                 instruct_view.queue(function() {
-                    for (var j = 1; j <= precision - 1; j++) abacus_view.setNumber(j, 9 - getNumber(j));
-                    abacus_view.setNumber(j, 10 - getNumber(j));
+                    for (var j = 1; j <= precision - 1; j++) {
+                        abacus_view.setNumber(j, 9 - abacus_view.getNumber(j));
+                    }
+                    abacus_view.setNumber(j, 10 - abacus_view.getNumber(j));
                     $(this).dequeue();
                 });
                 $(this).dequeue();
@@ -279,48 +287,53 @@ function execute(a, b, operator, args) {
         case 'times':
             // show a on the left side of abacus
             instruct_view.append('Populate abacus with left operand');
-            var no = a.split('');
-            for (var j = 1; j <= precision && j <= no.length; j++) {
-                var d = no[j - 1];
-                abacus_view.setNumber(j, d);
+            {
+                const no = a.split('');
+                for (var j = 1; j <= precision && j <= no.length; j++) {
+                    const d = no[j - 1];
+                    abacus_view.setNumber(j, d);
+                }
             }
 
             // times b digit by digit
-            var no = b.split('').reverse();
-            for (var j = a.length; j >= 1; j--) {
-                // take out last digit from a and remove it from the suanpan
-                const a_i = abacus_view.getNumber(j);
-                if (a_i == 0) continue;
-                times(j, a_i, b[0], {
-                    show_stroke: true,
-                    flag_replace: true,
-                    abacus_view: abacus_view,
-                    instruct_view: instruct_view,
-                });
-
-                for (var i = 1; i < b.length; i++) {
-                    if (i + j > precision) {
-                        overflow();
-                        continue;
-                    }
-                    times(j + i, a_i, b[i], {
+            {
+                const no = b.split('').reverse();
+                for (var j = a.length; j >= 1; j--) {
+                    // take out last digit from a and remove it from the suanpan
+                    const a_i = abacus_view.getNumber(j);
+                    if (a_i == 0) continue;
+                    times(j, a_i, b[0], {
                         show_stroke: true,
                         flag_replace: true,
                         abacus_view: abacus_view,
                         instruct_view: instruct_view,
                     });
+
+                    for (var i = 1; i < b.length; i++) {
+                        if (i + j > precision) {
+                            overflow();
+                            continue;
+                        }
+                        times(j + i, a_i, b[i], {
+                            show_stroke: true,
+                            flag_replace: true,
+                            abacus_view: abacus_view,
+                            instruct_view: instruct_view,
+                        });
+                    }
                 }
             }
             break;
         case 'divide by':
             // show a on the left side of abacus
             instruct_view.append('Populate abacus with left operand');
-            var no = a.split('');
-            for (var j = 2; j <= precision && j - 1 <= no.length; j++) {
-                var d = no[j - 2];
-                abacus_view.setNumber(j, d);
+            {
+                const no = a.split('');
+                for (var j = 2; j <= precision && j - 1 <= no.length; j++) {
+                    const d = no[j - 2];
+                    abacus_view.setNumber(j, d);
+                }
             }
-
 
             divide_by(2, parseFloat('0.' + a), parseFloat('0.' + b));
 
