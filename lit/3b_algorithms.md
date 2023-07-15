@@ -300,26 +300,26 @@ function execute(a, b, operator, args) {
 
             // times b digit by digit
             {
-                const no = b.split('').reverse();
+                const no = b.split('');
                 for (var j = a.length; j >= 1; j--) {
                     // take out last digit from a and remove it from the suanpan
                     const a_i = abacus_view.getNumber(j);
                     if (a_i == 0) continue;
-                    times(j, a_i, b[0], {
+                    times(j, a_i, no[0], {
                         show_stroke: true,
                         flag_replace: true,
                         abacus_view: abacus_view,
                         instruct_view: instruct_view,
                     });
 
-                    for (var i = 1; i < b.length; i++) {
+                    for (var i = 1; i < no.length; i++) {
                         if (i + j > precision) {
                             overflow();
                             continue;
                         }
-                        times(j + i, a_i, b[i], {
+                        times(j + i, a_i, no[i], {
                             show_stroke: true,
-                            flag_replace: true,
+                            flag_replace: false,
                             abacus_view: abacus_view,
                             instruct_view: instruct_view,
                         });
