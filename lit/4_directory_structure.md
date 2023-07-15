@@ -6,6 +6,7 @@ Main script
 ``` {.javascript file=src/main.js}
 import Backbone from 'backbone';
 import _ from 'underscore';
+import $ from 'jquery';
 
 <<check-format>>
 <<align-decimal>>

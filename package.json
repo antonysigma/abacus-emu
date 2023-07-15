@@ -1,7 +1,7 @@
 {
-  "name": "your-app",
-  "description": "Description",
-  "author": "Your Name",
+  "name": "abacus-emu",
+  "description": "Chinese abacus emulator",
+  "author": "Antony Chan",
   "version": "0.0.1",
   "private": true,
   "repository": {
@@ -9,10 +9,9 @@
     "url": ""
   },
   "scripts": {
-    "start": "webpack-dev-server",
-    "build": "yarn run lint && webpack -p",
+    "build": "esbuild src/main.js --bundle --minify --sourcemap --outdir=static --target=es6",
     "lint": "eslint app",
-    "test": "echo test"
+    "watch": "esbuild src/main.js --bundle --watch --outdir=static"
   },
   "dependencies": {
     "backbone": "~1.3.3",
@@ -21,18 +20,7 @@
     "yarn": "^1.22.10"
   },
   "devDependencies": {
-    "babel-core": "^6.7.6",
-    "babel-loader": "^6.2.4",
-    "babel-preset-es2015": "^6.6.0",
-    "copy-webpack-plugin": "^1.1.1",
-    "css-loader": "^0.23.1",
-    "eslint": "^2.11.1",
-    "extract-text-webpack-plugin": "^1.0.1",
-    "style-loader": "^0.13.1",
-    "stylus": "^0.54.5",
-    "underscore-template-loader": "^0.7.2",
-    "webpack": "^1.12.15",
-    "webpack-dev-server": "^1.16.2",
-    "webpack-merge": "^0.15.0"
+    "esbuild": "^0.18.13",
+    "eslint": "^2.11.1"
   }
 }
