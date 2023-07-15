@@ -172,14 +172,17 @@ times(j, a, d, args) {
         //add operation to queue
         const digits = abacus_view.model.get('digits');
         instruct_view.queue(function () {
+            let new_args = args;
+            new_args.show_stroke = false;
+
             if (j + 1 <= digits) {
                 if (flag_replace) {
                     //overwrite the original digit
                     abacus_view.setNumber(j, Math.floor(prod / 10));
                 } else {
-                    plus(j, Math.floor(prod / 10), args);
+                    plus(j, Math.floor(prod / 10), new_args);
                 }
-                plus(j + 1, prod % 10, args);
+                plus(j + 1, prod % 10, new_args);
             } else {
                 overflow();
             }
