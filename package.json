@@ -9,18 +9,20 @@
     "url": ""
   },
   "scripts": {
-    "build": "esbuild src/main.js --bundle --minify --sourcemap --outdir=static --target=es6",
-    "lint": "eslint src/main.js",
+    "build": "node esbuild.mjs",
+    "flow": "flow",
+    "lint": "eslint src/main2.js",
     "watch": "esbuild src/main.js --bundle --watch --outdir=static"
   },
   "dependencies": {
-    "backbone": "~1.3.3",
-    "jquery": "~3.5.0",
-    "underscore": "^1.12.1"
+    "lodash.debounce": "^4.0.8",
+    "queue": "^7.0.0"
   },
   "devDependencies": {
-    "esbuild": "^0.18.13",
-    "eslint": "^9.8.0",
-    "nodejs": "^0.0.0"
+    "esbuild": "^0.25.0",
+    "esbuild-plugin-vue3": "^0.4.2",
+    "eslint": "^9.20.1",
+    "nodejs": "^0.0.0",
+    "vue": "^3.5.13"
   }
 }
