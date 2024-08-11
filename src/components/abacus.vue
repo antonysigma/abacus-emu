@@ -29,6 +29,19 @@ import {precision, abacus_digits} from '../models';
 function range(n) {
     return Array(n).keys();
 }
+
+watch(precision, (new_precision) => {
+    const current_precision = abacus_digits.value.length + 0;
+    abacus_digits.value.length = new_precision;
+
+    if(precision <= current_precision) {
+        return;
+    }
+
+    for(let i = current_precision; i < new_precision; i++) {
+        abacus_digits.value[i] = 0;
+    }
+})
 </script>
 
 <style>

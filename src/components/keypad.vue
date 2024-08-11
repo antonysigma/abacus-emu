@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="onSubmit">
+    <form @submit.prevent="onSubmit" id="keypad">
         <input maxlength="10" id="a" v-model="a"/>
         <select v-model="operator">
             <option value="plus">&plus;</option>
@@ -13,12 +13,12 @@
 </template>
 
 <style>
-form input {
+#keypad input {
     font-size: 120%;
     width: 7em;
 }
 
-select {
+#keypad select {
     font-size: 170%;
 }
 </style>

@@ -5,7 +5,7 @@
         <option selected="selected">13</option>
         <option>20</option>
     </select>
-    <button>Change</button></div>
+</div>
 </template>
 
 <script setup>
