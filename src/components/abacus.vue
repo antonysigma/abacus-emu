@@ -3,7 +3,13 @@
         <thead>
             <tr v-for="i of range(3)" :key="i">
                 <td v-for="j of abacus_digits.keys()"
-                :class="{empty: (abacus_digits[j] >=5)?(i===1):(i===2)}" :key="j">&#xFEFF;</td>
+                :class="{empty: (abacus_digits[j] >=10)?
+                    (i===0):
+                    (
+                        (abacus_digits[j] >= 5)?(i===1):(i===2)
+                    )}"
+                :key="j"
+                @click.prevent="() => { topBeadClicked(i, j); }">&#xFEFF;</td>
             </tr>
         </thead>
         <tbody>
@@ -15,7 +21,9 @@
         <tfoot>
             <tr v-for="i of range(6)" :key="i">
                 <td v-for="j of abacus_digits.keys()"
-                :class="{empty: i === (abacus_digits[j] % 5)}" :key="j">&#xFEFF;</td>
+                :class="{empty: i === (abacus_digits[j] % 5)}"
+                :key="j"
+                @click.prevent="(e) => { bottomBeadClicked(i, j, e); }">&#xFEFF;</td>
             </tr>
         </tfoot>
     </table>
@@ -23,8 +31,9 @@
 </template>
 
 <script setup>
-import { watch, computed } from 'vue';
-import {precision, abacus_digits} from '../models';
+import {computed, watch} from 'vue';
+
+import {abacus_digits, precision} from '../models';
 
 function range(n) {
     return Array(n).keys();
@@ -34,14 +43,31 @@ watch(precision, (new_precision) => {
     const current_precision = abacus_digits.value.length + 0;
     abacus_digits.value.length = new_precision;
 
-    if(precision <= current_precision) {
+    if (precision <= current_precision) {
         return;
     }
 
-    for(let i = current_precision; i < new_precision; i++) {
+    for (let i = current_precision; i < new_precision; i++) {
         abacus_digits.value[i] = 0;
     }
 })
+
+function topBeadClicked(i, j) {
+    const current_value = abacus_digits.value[j];
+    switch (i) {
+        case 0:
+            abacus_digits.value[j] = (current_value % 5) + 10;
+            return;
+        case 1:
+            abacus_digits.value[j] = (current_value % 5) + 5;
+            return;
+        case 2:
+            abacus_digits.value[j] = current_value % 5;
+            return;
+    }
+}
+
+function bottomBeadClicked(i, j, e) {}
 </script>
 
 <style>
