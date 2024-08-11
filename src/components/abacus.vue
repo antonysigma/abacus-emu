@@ -23,7 +23,7 @@
                 <td v-for="j of abacus_digits.keys()"
                 :class="{empty: i === (abacus_digits[j] % 5)}"
                 :key="j"
-                @click.prevent="(e) => { bottomBeadClicked(i, j, e); }">&#xFEFF;</td>
+                @click.prevent="() => { bottomBeadClicked(i, j); }">&#xFEFF;</td>
             </tr>
         </tfoot>
     </table>
@@ -67,7 +67,25 @@ function topBeadClicked(i, j) {
     }
 }
 
-function bottomBeadClicked(i, j, e) {}
+function bottomBeadClicked(i, j) {
+    const current_value = abacus_digits.value[j];
+    if (current_value === 14 && i === 5) {
+        // Value 15 is rarely used except during square root operation.
+        return;
+    }
+
+    if (current_value >= 10) {
+        abacus_digits.value[j] = 10 + i;
+        return;
+    }
+
+    if (current_value >= 5) {
+        abacus_digits.value[j] = 5 + i;
+        return;
+    }
+
+    abacus_digits.value[j] = i;
+}
 </script>
 
 <style>
