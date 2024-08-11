@@ -61,3 +61,11 @@ overflow: auto;
 input#a,input#b {
 width:10em;
 }
+
+input {
+font-size: 120%;
+}
+
+select {
+font-size: 170%;
+}

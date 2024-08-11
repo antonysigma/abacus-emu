@@ -23,10 +23,10 @@ Any binary operation starts with a left operand:
 Following the operator
 ```{.html #operator}
 <select>
-  <option>plus</option>
-  <option>minus</option>
-  <option>times</option>
-  <option>divide by</option>
+  <option value="plus">+</option>
+  <option value="minus">&minus;</option>
+  <option value="times">&times;</option>
+  <option value="divide by">&#x00F7;</option>
 </select>
 ```
 
