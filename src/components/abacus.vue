@@ -9,7 +9,7 @@
                         (abacus_digits[j] >= 5)?(i===1):(i===2)
                     )}"
                 :key="j"
-                @click.prevent="() => { topBeadClicked(i, j); }">&#xFEFF;</td>
+                @click="() => { topBeadClicked(i, j); }">&#xFEFF;</td>
             </tr>
         </thead>
         <tbody>
@@ -23,11 +23,11 @@
                 <td v-for="j of abacus_digits.keys()"
                 :class="{empty: i === (abacus_digits[j] % 5)}"
                 :key="j"
-                @click.prevent="() => { bottomBeadClicked(i, j); }">&#xFEFF;</td>
+                @click="() => { bottomBeadClicked(i, j); }">&#xFEFF;</td>
             </tr>
         </tfoot>
     </table>
-    <button>Reset</button>
+    <button @click="onReset">Reset</button>
 </template>
 
 <script setup>
@@ -85,6 +85,10 @@ function bottomBeadClicked(i, j) {
     }
 
     abacus_digits.value[j] = i;
+}
+
+function onReset() {
+    abacus_digits.value.fill(0);
 }
 </script>
 
