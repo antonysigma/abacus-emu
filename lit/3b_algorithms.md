@@ -192,6 +192,154 @@ times(j, a, d, args) {
 }
 ```
 
+## Division
+
+```{.javascript #division-algorithm}
+function get_quo(j, a, b, args) {
+    const instruct_view = args.instruct_view;
+
+    //skip zero digit
+    if (a == 0 || b == 0) return;
+
+    if (a >= b) {
+        const quo = Math.floor(a/b);
+        const d = Math.floor(b*10);
+        instruct_view.append(divide1[d - 1][quo - 1]);
+        instruct_view.queue(function () {
+            minus(j, quo*d, args);
+            plus(j - 1, quo, args);
+            $(this).dequeue();
+        });
+    }
+}
+
+function divide_by(j, a, b, args) {
+    //skip zero digit
+    if (a == 0 || b == 0) return;
+    if (a >= b)
+    {
+        return divide_by(j-1,a/10, b, args);
+    }
+
+    const abacus_view = args.abacus_view;
+    const instruct_view = args.instruct_view;
+    const digits = abacus_view.model.get('digits');
+
+    let new_args = args;
+    new_args.show_stroke = false;
+
+    // Find the first digits
+     const x = Math.floor(a*10);
+     const d = Math.floor(b*10);
+
+    // Estimate the quotient
+     const quo = Math.floor(x*10/d);
+
+    // Compute the true quotient
+    const true_quo = Math.floor(a*10/b);
+
+    if (quo >= 10) {
+        // Todo: avoid using true quotient
+        const q = Math.floor(quo/10);
+
+        instruct_view.append(divide1[d - 1][q - 1]);
+        instruct_view.queue(function () {
+            minus(j, q*d, new_args);
+            plus(j-1, q, new_args);
+            $(this).dequeue();
+        });
+    }
+    else if (Math.floor(a*10) > 0)
+    {
+        const reminder = x*10 - quo * d;
+
+        instruct_view.append(divide2[d - 1][x - 1]);
+
+        instruct_view.queue(function () {
+            abacus_view.setNumber(j, quo);
+            abacus_view.setNumber(j + 1, reminder + abacus_view.getNumber(j+1));
+            $(this).dequeue();
+        });
+    }
+
+    const quo_diff = true_quo - quo;
+    if (true_quo > quo)
+    {
+    // Underestimated quotient
+        if(quo_diff*d <= 9) {
+            instruct_view.append(divide1[d - 1][quo_diff - 1]);
+        } else {
+            instruct_view.append(`Repeat "${divide1[d - 1][0]}" by ${quo_diff} times`);
+        }
+
+        instruct_view.queue(function () {
+            minus(j+1, quo_diff*d, new_args);
+            plus(j, quo_diff, new_args);
+            $(this).dequeue();
+        });
+    }
+    else if (true_quo < quo)
+    {
+    // Overestimated quotient
+        const quo_diff_flipped = quo_diff * -1;
+        if (quo_diff_flipped > 1) {
+            instruct_view.append(`Repeat "${divide4[d - 1]}" by ${quo_diff_flipped} times`);
+        } else {
+            instruct_view.append(divide4[d - 1]);
+        }
+
+        instruct_view.queue(function () {
+            plus(j+1, quo_diff_flipped*d, new_args);
+            minus(j, quo_diff_flipped, new_args);
+            $(this).dequeue();
+        });
+
+    }
+
+    // Long division
+    if (true_quo > 0 && Math.log10(b - d/10) > - digits)
+    {
+        let y = Math.round( (b-d/10) * Math.pow(10, digits) ) / Math.pow(10, digits-1);
+
+        const roundoff_precision = args.right_operand_precision - 1;
+        instruct_view.append(`Subtract by ${y.toFixed(roundoff_precision)} * ${true_quo} = ${(y*true_quo).toFixed(roundoff_precision)}`);
+
+        y *= true_quo;
+        //for (let k=j+1; k<digits || Math.log10(y)>-digits; k++)
+        // BUG: round off error when number = 0.3999999
+        for (let k=j+1; k<digits; k++)
+        {
+            let r = Math.floor(y);
+            if (r > 0)
+                instruct_view.queue(function () {
+                    minus(k, r, new_args);
+                    $(this).dequeue();
+                });
+            y = (y-r) * 10;
+        }
+    }
+
+    // Recursion
+    if (true_quo >= 10)
+    {
+        // Bug: round off error
+        const remainder = a*10-Math.floor(true_quo/10)*10*b;
+        if(j+1 < digits) // && reminder * Math.pow(10, digits) > 0)
+        {
+            divide_by(j+1, remainder, b, args);
+        }
+    }
+    else
+    {
+        const remainder = a*10-true_quo*b;
+        if(j+1 < digits) // && reminder * Math.pow(10, digits) > 0)
+        {
+            divide_by(j+1, remainder, b, args);
+        }
+    }
+}
+```
+
 ## Overall handler
 
 ```{.javascript #execute}
@@ -219,7 +367,7 @@ function execute(a, b, operator, args) {
             }
             break;
         case 'times':
-        case 'divide':
+        case 'divide by':
             // trailing zeros are meaningless
             var re3 = new RegExp('^(\\d*[1-9])0*$', 'i');
             a = a.replace(re3, function(x, y) {
@@ -338,20 +486,13 @@ function execute(a, b, operator, args) {
                 }
             }
 
-            divide_by(2, parseFloat('0.' + a), parseFloat('0.' + b));
-
-            // var x = parseFloat('0.'+a);
-            // var d = parseFloae('0,'+b);
-            // for(var j = 2; j< precision - 1; j++) {
-            //    if (Math.log10(x) < -precision)
-            //        break;
-
-            //    divide_by(j,x,d);
-
-            //    var true_quo = x*10 - d;
-            //    x = x*10 - true_quo*d;
-            //}
-
+            divide_by(2, parseFloat('0.' + a), parseFloat('0.' + b), {
+                            right_operand_precision: b.length,
+                            show_stroke: true,
+                            flag_replace: false,
+                            abacus_view: abacus_view,
+                            instruct_view: instruct_view,
+            });
     }  // end_switch
 
     instruct_view.append('End of instructions.');

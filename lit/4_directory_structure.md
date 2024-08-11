@@ -29,6 +29,8 @@ import $ from 'jquery';
 <<minus-algorithm>>
 <<multiply-commands>>
 <<multiply-algorithm>>
+<<division-commands>>
+<<division-algorithm>>
 <<execute>>
 
 <<main>>

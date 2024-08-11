@@ -59,7 +59,9 @@ const InputView = Backbone.View.extend({
         this.abacus_view = options.abacus_view;
 	this.precision_model = options.precision_model;
     },
-    onSubmit() {
+    onSubmit(e) {
+        e.preventDefault();
+
         const model = this.handleForm();
         if(model) {
             execute(model.a, model.b, model.operator, {
