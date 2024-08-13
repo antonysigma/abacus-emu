@@ -1,5 +1,6 @@
-import { appendInstruct, is_overflow, getNumber, setNumber } from "../models";
-import {mode_t, default_mode} from './utils';
+import {appendInstruct, getNumber, is_overflow, setNumber} from '../models';
+import {default_mode, mode_t} from './utils';
+import { queueStep } from './job_queue';
 
 const plus1 = [
     '一上一 add 1', '二上二 add 2', '三上三 add 3', '四上四 add 4', '五上五 add 5', '六上六 add 6',
@@ -22,54 +23,13 @@ const plus4 = [
 ];
 
 function plus(j: number, d: number, mode: mode_t = default_mode) {
-
     // skip zero digit
     if (d === 0) return;
     const a = getNumber(j);
     const sum = a + d;
 
-    if (mode.show_stroke) {
-        if (d < 5) {
-            if (sum >= 10)
-                appendInstruct(plus3[d - 1]);
-            else if (a < 5 && sum >= 5)
-                appendInstruct(plus2[d - 1]);
-            else
-                appendInstruct(plus1[d - 1]);
-        } else if (d === 5) {
-            if (sum < 10)
-                appendInstruct(plus1[d - 1]);
-            else
-                appendInstruct(plus3[d - 1]);
-        } else {
-            if (sum < 10)
-                appendInstruct(plus1[d - 1]);
-            else if (a >= 5 && sum < 15)
-                appendInstruct(plus4[d - 6]);
-            else
-                appendInstruct(plus3[d - 1]);
-        }
-        // add operation to queue
-        if (sum >= 10) {
-            instruct_view.queue(function() {
-                setNumber(j, sum - 10);
-                if (j - 1 >= 1) {
-                    // Carry-out
-                    plus(j - 1, 1, {show_stroke:false, flag_replace:mode.flag_replace});
-                } else {
-                    is_overflow.value = true;
-                }
-                $(this).dequeue();
-            });
-        } else {
-            instruct_view.queue(function() {
-                setNumber(j, sum);
-                $(this).dequeue();
-            });
-        }
-    }
-    // do operation immediately
-    else {
+    if (!mode.show_stroke) {
+        // do operation immediately
         if (sum >= 10) {
             setNumber(j, sum - 10);
             if (j - 1 >= 1)
@@ -78,6 +38,45 @@ function plus(j: number, d: number, mode: mode_t = default_mode) {
                 is_overflow.value = true;
         } else
             setNumber(j, sum);
+        return;
+    }
+
+    // show_stroke == True
+    if (d < 5) {
+        if (sum >= 10)
+            appendInstruct(plus3[d - 1]);
+        else if (a < 5 && sum >= 5)
+            appendInstruct(plus2[d - 1]);
+        else
+            appendInstruct(plus1[d - 1]);
+    } else if (d === 5) {
+        if (sum < 10)
+            appendInstruct(plus1[d - 1]);
+        else
+            appendInstruct(plus3[d - 1]);
+    } else {
+        if (sum < 10)
+            appendInstruct(plus1[d - 1]);
+        else if (a >= 5 && sum < 15)
+            appendInstruct(plus4[d - 6]);
+        else
+            appendInstruct(plus3[d - 1]);
+    }
+    // add operation to queue
+    if (sum >= 10) {
+        queueStep(() => {
+            setNumber(j, sum - 10);
+            if (j >= 1) {
+                // Carry-out
+                plus(j - 1, 1, {show_stroke: false, flag_replace: mode.flag_replace});
+            } else {
+                is_overflow.value = true;
+            }
+        });
+    } else {
+        queueStep(() => {
+            setNumber(j, sum);
+        });
     }
 }
 

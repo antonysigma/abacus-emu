@@ -28,6 +28,6 @@ import {a, b, operator} from '../models';
 import { dispatchCalculation } from '../services/dispatch';
 
 function onSubmit(e) {
-    dispatchCalculation(a.value, b.value, operator.value);
+    dispatchCalculation(a.value.toString(), b.value.toString(), operator.value);
 }
 </script>

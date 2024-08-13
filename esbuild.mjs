@@ -1,5 +1,6 @@
 import esbuild from 'esbuild';
 import vuePlugin from 'esbuild-plugin-vue3';
+import flow from 'esbuild-plugin-flow';
 //import fs from 'node:fs'
 
 const result = await esbuild.build({
