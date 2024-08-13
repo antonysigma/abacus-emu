@@ -1,6 +1,6 @@
-import {appendInstruct, getNumber, is_overflow, setNumber} from '../models';
+import {getNumber, is_overflow, setNumber} from '../models';
 import {default_mode, mode_t} from './utils';
-import { queueStep } from './job_queue';
+import { queueStep, appendInstruct } from './job_queue';
 
 const plus1 = [
     '一上一 add 1', '二上二 add 2', '三上三 add 3', '四上四 add 4', '五上五 add 5', '六上六 add 6',

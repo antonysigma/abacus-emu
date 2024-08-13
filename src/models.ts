@@ -3,15 +3,15 @@ import {ref} from 'vue';
 const speed = ref(500);
 const precision = ref(7);
 
-const a = ref('123');
-const b = ref('123');
+const a = ref('123456');
+const b = ref('123456');
 const operator = ref('plus');
 
 const is_overflow = ref(false);
 
 const abacus_digits = ref([1, 2, 3, 4, 5, 6, 7]);
 
-const instruction_steps = ref(['Idling']);
+const instruction_steps = ref([]);
 
 function getNumber(j: number) {
     if (j >= abacus_digits.value.length) {
@@ -32,10 +32,6 @@ function resetNumbers() {
     abacus_digits.value.fill(0);
 }
 
-function appendInstruct(message: string) {
-    instruction_steps.value.push(message);
-}
-
 function resetInstruct() {
     instruction_steps.value.length = 0;
 }
@@ -52,6 +48,5 @@ export {
     setNumber,
     resetNumbers,
     is_overflow,
-    appendInstruct,
     resetInstruct,
 };

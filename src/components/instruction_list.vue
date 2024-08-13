@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <ol>
         <li v-for="[index, inst] of instruction_steps.entries()" :key="index">{{ inst }}</li>
-    </div>
+    </ol>
 </template>
 
 <script setup>

@@ -1,7 +1,7 @@
-import {appendInstruct, getNumber, is_overflow, precision, resetInstruct, resetNumbers, setNumber} from '../models';
+import {getNumber, is_overflow, precision, resetInstruct, resetNumbers, setNumber} from '../models';
 
 import {plus} from './addition';
-import {queueStep} from './job_queue';
+import {queueStep, appendInstruct} from './job_queue';
 import {default_mode, mode_t} from './utils';
 import {validateOperands} from './validate';
 

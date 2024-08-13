@@ -1,9 +1,9 @@
 <template>
 <div>
     Precision: <select v-model="precision">
-        <option>7</option>
-        <option selected="selected">13</option>
-        <option>20</option>
+        <option :value="7">7</option>
+        <option :value="13" selected="selected">13</option>
+        <option :value="20">20</option>
     </select>
 </div>
 </template>

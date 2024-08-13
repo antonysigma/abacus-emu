@@ -44,7 +44,7 @@ watch(precision, (new_precision) => {
     const current_precision = abacus_digits.value.length + 0;
     abacus_digits.value.length = new_precision;
 
-    if (precision <= current_precision) {
+    if (new_precision <= current_precision) {
         return;
     }
 
@@ -93,7 +93,6 @@ function bottomBeadClicked(i, j) {
 table {
 font-size:27px;
 line-height:1em;
-background-color: yellow;
 border: solid 10px brown;
 }
 
@@ -101,6 +100,7 @@ td {
 width:48px;
 height:1em;
 background:url(../bead.gif) no-repeat center bottom;
+background-color: yellow;
 margin:0;
 padding:0;
 }
