@@ -27,13 +27,14 @@
             </tr>
         </tfoot>
     </table>
-    <button @click="onReset">Reset</button>
+    <button @click="resetNumbers">Reset</button>
 </template>
 
 <script setup>
-import {computed, watch} from 'vue';
+import {watch} from 'vue';
 
 import {abacus_digits, precision} from '../models';
+import { resetNumbers } from '../models';
 
 function range(n) {
     return Array(n).keys();
@@ -85,10 +86,6 @@ function bottomBeadClicked(i, j) {
     }
 
     abacus_digits.value[j] = i;
-}
-
-function onReset() {
-    abacus_digits.value.fill(0);
 }
 </script>
 
