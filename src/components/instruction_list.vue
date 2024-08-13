@@ -1,6 +1,6 @@
 <template>
     <div>
-        <li v-for="{inst, index} in instruction_list" :key="index">{{ inst }}</li>
+        <li v-for="[index, inst] of instruction_steps.entries()" :key="index">{{ inst }}</li>
     </div>
 </template>
 
