@@ -22,6 +22,8 @@ function initNumber(a: string, precision_value:number, pad_left: boolean) {
 }
 
 function dispatchCalculation(a: string, b: string, operator: string) {
+    is_overflow.value = false;
+
     let is_valid = false;
     [is_valid, a, b] = validateOperands(a, b, operator);
     if (!is_valid) return;

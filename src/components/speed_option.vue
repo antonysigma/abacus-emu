@@ -1,5 +1,6 @@
 <template>
     <div>
+        Speed:
         <label v-for="item in speed_settings" :key="item.name">
         <input type="radio" name="speed" :value="item.value" v-model="speed"/>
         {{ item.name }}</label>
