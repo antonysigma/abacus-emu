@@ -8,6 +8,7 @@ const b = ref('123456');
 const operator = ref('plus');
 
 const is_overflow = ref(false);
+const is_10s_complement = ref(false);
 
 const abacus_digits = ref([1, 2, 3, 4, 5, 6, 7]);
 
@@ -48,5 +49,6 @@ export {
     setNumber,
     resetNumbers,
     is_overflow,
+    is_10s_complement,
     resetInstruct,
 };

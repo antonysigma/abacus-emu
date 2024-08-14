@@ -1,13 +1,11 @@
-import {getNumber, is_overflow, precision, resetInstruct, resetNumbers, setNumber} from '../models';
+import {getNumber, is_overflow, precision, resetInstruct, resetNumbers, setNumber, is_10s_complement} from '../models';
 
 import {plus} from './addition';
+import {minus} from './subtraction';
 import {queueStep, appendInstruct} from './job_queue';
 import {default_mode, mode_t} from './utils';
 import {validateOperands} from './validate';
 
-function minus(a: number, b: number, minus_flag: boolean, mode: mode_t = default_mode): boolean {
-    return false;
-}
 function times(j: number, ai: number, b: number, mode: mode_t = default_mode) {}
 function divide_by(
     j: number, a: number, b: number, right_operand_precision: number, mode: mode_t = default_mode) {
@@ -47,15 +45,16 @@ function dispatchCalculation(a: string, b: string, operator: string) {
             break;
         case 'minus':
             // show a on the right side of abacus
+            is_10s_complement.value = false;
             initNumber(a, precision_value, false)
+            queueStep(()=>{});
 
-            let minus_flag = false;
             for (let j = precision_value - b.length; j < precision_value; j++) {
-                const d = b.charCodeAt(j - precision_value - 1 + b.length) - ascii_zero;
-                minus_flag = minus(j, d, minus_flag);
+                const d = b.charCodeAt(j - precision_value + b.length) - ascii_zero;
+                minus(j, d);
             }
             queueStep(function() {
-                if (!minus_flag) {
+                if (!is_10s_complement.value) {
                     return;
                 }
                 // negative number
@@ -66,9 +65,7 @@ function dispatchCalculation(a: string, b: string, operator: string) {
                         setNumber(j, 9 - getNumber(j));
                     }
                     setNumber(j, 10 - getNumber(j));
-                    $(this).dequeue();
                 });
-                $(this).dequeue();
             });
             break;
         case 'times':
