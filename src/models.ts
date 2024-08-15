@@ -9,6 +9,7 @@ const operator = ref('plus');
 
 const is_overflow = ref(false);
 const is_10s_complement = ref(false);
+const is_running = ref(false);
 
 const abacus_digits = ref([1, 2, 3, 4, 5, 6, 7]);
 
@@ -50,5 +51,6 @@ export {
     resetNumbers,
     is_overflow,
     is_10s_complement,
+    is_running,
     resetInstruct,
 };

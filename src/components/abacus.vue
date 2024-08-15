@@ -29,7 +29,7 @@
             </tr>
         </tfoot>
     </table>
-    <button @click="resetNumbers">Reset</button>
+    <button @click="resetNumbers" :disabled="is_running">Reset</button>
 </template>
 
 <script setup>
@@ -37,7 +37,7 @@ import debounce from 'lodash.debounce';
 import {watch} from 'vue';
 
 import {abacus_digits, precision} from '../models';
-import {resetNumbers} from '../models';
+import {resetNumbers, is_running} from '../models';
 
 function range(n) {
     return Array(n).keys();
@@ -168,6 +168,8 @@ background-color:blue;
 
 tbody tr td {
 font-size:12pt;
+font-family: sans-serif;
+font-weight: bold;
 background-color:brown;
 background-image:none;
 color:#FFF;

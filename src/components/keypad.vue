@@ -8,7 +8,7 @@
             <option value="divide by">&#x00F7;</option>
         </select>
         <input maxlength="10" id="b" v-model="b" />
-        <input value="Execute" type="submit"/>
+        <input value="Execute" type="submit" :disabled="is_running"/>
     </form>
 </template>
 
@@ -24,10 +24,12 @@
 </style>
 
 <script setup>
-import {a, b, operator} from '../models';
+import {a, b, operator, is_running} from '../models';
 import { dispatchCalculation } from '../services/dispatch';
 
-function onSubmit(e) {
+function onSubmit() {
+    is_running.value = true;
     dispatchCalculation(a.value.toString(), b.value.toString(), operator.value);
+    is_running.value = false;
 }
 </script>
