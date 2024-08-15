@@ -1,12 +1,12 @@
-import {getNumber, is_overflow, precision, resetInstruct, resetNumbers, setNumber, is_10s_complement} from '../models';
+import {getNumber, is_10s_complement, is_overflow, precision, resetInstruct, resetNumbers, setNumber} from '../models';
 
 import {plus} from './addition';
+import {appendInstruct, queueStep} from './job_queue';
+import {times} from './multiplication';
 import {minus} from './subtraction';
-import {queueStep, appendInstruct} from './job_queue';
 import {default_mode, mode_t} from './utils';
 import {validateOperands} from './validate';
 
-function times(j: number, ai: number, b: number, mode: mode_t = default_mode) {}
 function divide_by(
     j: number, a: number, b: number, right_operand_precision: number, mode: mode_t = default_mode) {
 }
