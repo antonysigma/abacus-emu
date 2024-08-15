@@ -69,10 +69,11 @@ function minus(j: number, d: number, mode: mode_t = default_mode) {
     }
 
     // Else, do operation immediately
+    const new_mode = {show_stroke: false, flag_replace: mode.flag_replace};
     if (diff < 10) {
         setNumber(j, diff);
         if (j - 1 >= 0) {
-            minus(j - 1, 1, mode);
+            minus(j - 1, 1, new_mode);
         } else {
             is_overflow.value = true;
             // special because the number can be restored

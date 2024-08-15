@@ -7,13 +7,13 @@ import {minus} from './subtraction';
 import { divide_by } from './division';
 import {validateOperands} from './validate';
 
-function initNumber(a: string, precision_value:number, pad_left: boolean) {
+function initNumber(a: string, precision_value: number, pad_left: boolean, offset: number = 0) {
     const ascii_zero = '0'.charCodeAt(0);
 
     appendInstruct('Populate abacus with left operand');
     for (let j = 0; j < precision_value && j < a.length; j++) {
         const d = a.charCodeAt(j) - ascii_zero;
-        setNumber(pad_left ? j : (j + precision_value - a.length), d);
+        setNumber(pad_left ? (j + offset) : (j - offset + precision_value - a.length), d);
     }
 }
 
@@ -98,9 +98,9 @@ function dispatchCalculation(a: string, b: string, operator: string) {
             break;
         case 'divide by':
             // show a on the left side of abacus
-            initNumber(a, precision_value, true);
+            initNumber(a, precision_value, true, 1);
 
-            divide_by(0, parseFloat('0.' + a), parseFloat('0.' + b), b.length, {
+            divide_by(1, parseFloat('0.' + a), parseFloat('0.' + b), b.length, {
                 show_stroke: true,
                 flag_replace: false,
             });

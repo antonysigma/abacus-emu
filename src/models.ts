@@ -3,9 +3,9 @@ import {ref} from 'vue';
 const speed = ref(500);
 const precision = ref(7);
 
-const a = ref('123456');
-const b = ref('123456');
-const operator = ref('plus');
+const a = ref('355');
+const b = ref('113');
+const operator = ref('divide by');
 
 const is_overflow = ref(false);
 const is_10s_complement = ref(false);
