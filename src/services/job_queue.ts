@@ -24,4 +24,4 @@ function appendInstruct(message: string) {
     });
 }
 
-export {queueStep, appendInstruct};
+export {queueStep, appendInstruct, sleep};

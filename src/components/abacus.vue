@@ -9,13 +9,14 @@
                         (abacus_digits[j] >= 5)?(i===1):(i===2)
                     )}"
                 :key="j"
+                :id="`h${i}_${j}`"
                 @click="() => { topBeadClicked(i, j); }">&#xFEFF;</td>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td v-for="j of abacus_digits.keys()"
-                :class="`b${j}_${i}`" :key="j">{{ abacus_digits[j] }}</td>
+                :key="j">{{ abacus_digits[j] }}</td>
             </tr>
         </tbody>
         <tfoot>
@@ -23,6 +24,7 @@
                 <td v-for="j of abacus_digits.keys()"
                 :class="{empty: i === (abacus_digits[j] % 5)}"
                 :key="j"
+                :id="`f${i}_${j}`"
                 @click="() => { bottomBeadClicked(i, j); }">&#xFEFF;</td>
             </tr>
         </tfoot>
@@ -32,6 +34,7 @@
 
 <script setup>
 import {watch} from 'vue';
+import debounce from 'lodash.debounce';
 
 import {abacus_digits, precision} from '../models';
 import { resetNumbers } from '../models';
@@ -51,7 +54,49 @@ watch(precision, (new_precision) => {
     for (let i = current_precision; i < new_precision; i++) {
         abacus_digits.value[i] = 0;
     }
-})
+});
+
+// Highlight all moved beads.
+watch(() => {
+    return [...abacus_digits.value];
+}, debounce((new_digits, old_digits) => {
+
+    if(new_digits.length !== old_digits.length) {
+        return;
+    }
+
+    document.querySelectorAll('td').forEach((element) => {
+        element.classList.remove('active');
+    });
+
+    for(let j = 0; j < new_digits.length; j++) {
+        const a = old_digits[j];
+        const b = new_digits[j];
+
+        if(a === b) {
+            continue;
+        }
+
+        // Highlight the moved head beads
+        const abs_diff = Math.abs(a - b);
+        if (abs_diff >= 5) {
+            const _a = Math.floor(a /5);
+            const _b = Math.floor(b /5);
+            for(let i = 2 - Math.max(_a, _b); i <= 2 - Math.min(_a, _b); i++) {
+                document.querySelector(`#h${i}_${j}`).classList.add('active');
+            }
+        }
+
+        // Highlight the moved foot beads
+        if(abs_diff % 5) {
+            const _a = a %5;
+            const _b = b %5;
+            for(let i = Math.min(_a, _b); i < Math.max(_a, _b); i++) {
+                document.querySelector(`#f${i}_${j}`).classList.add('active');
+            }
+        }
+    }
+}, 2));
 
 function topBeadClicked(i, j) {
     const current_value = abacus_digits.value[j];
