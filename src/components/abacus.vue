@@ -56,12 +56,20 @@ watch(precision, (new_precision) => {
     }
 });
 
+// Need to store the previous states due to debounce logic.
+let old_digits = [];
+
 // Highlight all moved beads.
 watch(() => {
     return [...abacus_digits.value];
-}, debounce((new_digits, old_digits) => {
+}, debounce((new_digits) => {
+    if(old_digits.length === 0) {
+        old_digits.length = new_digits.length;
+        old_digits.fill(0);
+    }
 
     if(new_digits.length !== old_digits.length) {
+        old_digits = new_digits;
         return;
     }
 
@@ -78,17 +86,16 @@ watch(() => {
         }
 
         // Highlight the moved head beads
-        const abs_diff = Math.abs(a - b);
-        if (abs_diff >= 5) {
-            const _a = Math.floor(a /5);
-            const _b = Math.floor(b /5);
-            for(let i = 2 - Math.max(_a, _b); i <= 2 - Math.min(_a, _b); i++) {
-                document.querySelector(`#h${i}_${j}`).classList.add('active');
-            }
+        {
+        const _a = Math.floor(a /5);
+        const _b = Math.floor(b /5);
+        for(let i = 2 - Math.max(_a, _b); i <= 2 - Math.min(_a, _b); i++) {
+            document.querySelector(`#h${i}_${j}`).classList.add('active');
         }
+    }
 
         // Highlight the moved foot beads
-        if(abs_diff % 5) {
+        {
             const _a = a %5;
             const _b = b %5;
             for(let i = Math.min(_a, _b); i < Math.max(_a, _b); i++) {
@@ -96,7 +103,9 @@ watch(() => {
             }
         }
     }
-}, 2));
+
+    old_digits = new_digits;
+}, 30));
 
 function topBeadClicked(i, j) {
     const current_value = abacus_digits.value[j];
