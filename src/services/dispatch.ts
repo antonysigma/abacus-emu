@@ -4,12 +4,8 @@ import {plus} from './addition';
 import {appendInstruct, queueStep} from './job_queue';
 import {times} from './multiplication';
 import {minus} from './subtraction';
-import {default_mode, mode_t} from './utils';
+import { divide_by } from './division';
 import {validateOperands} from './validate';
-
-function divide_by(
-    j: number, a: number, b: number, right_operand_precision: number, mode: mode_t = default_mode) {
-}
 
 function initNumber(a: string, precision_value:number, pad_left: boolean) {
     const ascii_zero = '0'.charCodeAt(0);
@@ -104,7 +100,7 @@ function dispatchCalculation(a: string, b: string, operator: string) {
             // show a on the left side of abacus
             initNumber(a, precision_value, true);
 
-            divide_by(2, parseFloat('0.' + a), parseFloat('0.' + b), b.length, {
+            divide_by(0, parseFloat('0.' + a), parseFloat('0.' + b), b.length, {
                 show_stroke: true,
                 flag_replace: false,
             });
