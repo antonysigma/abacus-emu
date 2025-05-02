@@ -8,6 +8,13 @@
   <InstructionList />
 </template>
 
+<style>
+#app {
+  width: min(50rem, 100%);
+  margin: 0 auto;
+}
+</style>
+
 <script setup>
 import Abacus from 'abacus.vue';
 import InstructionList from 'instruction_list.vue';
