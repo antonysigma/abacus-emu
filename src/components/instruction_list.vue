@@ -14,6 +14,7 @@ import {instruction_steps} from '../models';
 .instruction_view {
   height: max(50vh, 20em);
   overflow-y: scroll;
+  font-family: monospace;
 }
 .instruction_view li:nth-child(even) {
   background-color: #eee;
