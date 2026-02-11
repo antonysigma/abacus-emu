@@ -179,7 +179,7 @@ td {
   width: 48px;
   height: 1em;
   background-image: url(../bead.gif),
-   linear-gradient(150deg,#fff0 30%, #882 100%);
+   linear-gradient(150deg,#fff0 30%, #000a 100%);
   background-repeat: no-repeat;
   background-position: center bottom;
   background-color: #ffff3a;
@@ -191,7 +191,7 @@ td.empty {
   background-position: center top;
 }
 td.active {
-  background-color: blue;
+  background-color: #77f;
 }
 
 tbody tr td {
