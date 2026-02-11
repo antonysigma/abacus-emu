@@ -3,6 +3,7 @@
   <p>
   <SpeedOption />
   <PrecisionOption />
+  <BeadShape />
   </p>
   <Abacus />
   <OverflowWarning />
@@ -29,4 +30,5 @@ import PrecisionOption from 'precision_option.vue';
 import SpeedOption from 'speed_option.vue';
 
 import OverflowWarning from './overflow_warning.vue';
+import BeadShape from './bead_shape.vue';
 </script>

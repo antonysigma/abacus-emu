@@ -1,12 +1,12 @@
 <template>
   <table>
     <thead>
-      <tr v-for="i of range(3)" :key="i">
+      <tr v-for="i of range(is_round_bead ? 3 : 2, is_round_bead? 0:1)" :key="i">
         <td
           v-for="j of abacus_digits.keys()"
           :class="{
             empty:
-              abacus_digits[j] >= 10
+               abacus_digits[j] >= 10
                 ? i === 0
                 : abacus_digits[j] >= 5
                   ? i === 1
@@ -32,7 +32,7 @@
       </tr>
     </tbody>
     <tfoot>
-      <tr v-for="i of range(6)" :key="i">
+      <tr v-for="i of range(is_round_bead? 6 : 5)" :key="i">
         <td
           v-for="j of abacus_digits.keys()"
           :class="{ empty: i === abacus_digits[j] % 5 }"
@@ -54,12 +54,14 @@
 
 <script setup>
 import debounce from 'lodash.debounce';
-import {watch} from 'vue';
+import {watch, computed} from 'vue';
+import bead_round from '../bead.gif';
+import bead_ribbed from '../bead-ribbed.gif';
 
-import {abacus_digits, is_running, precision, resetNumbers} from '../models';
+import {abacus_digits, is_running, precision, resetNumbers, is_round_bead} from '../models';
 
-function range(n) {
-    return Array(n).keys();
+function range(n, offset=0) {
+    return Array.from({ length: n }, (v, i) => { return i + offset});
 }
 
 watch(precision, (new_precision) => {
@@ -112,7 +114,7 @@ watch(
                     const _a = Math.floor(a / 5);
                     const _b = Math.floor(b / 5);
                     for (let i = 2 - Math.max(_a, _b); i <= 2 - Math.min(_a, _b); i++) {
-                        document.querySelector(`#h${i}_${j}`).classList.add('active');
+                        document.querySelector(`#h${i}_${j}`)?.classList.add('active');
                     }
                 }
 
@@ -165,6 +167,12 @@ function bottomBeadClicked(i, j) {
 
     abacus_digits.value[j] = i;
 }
+
+const bead_image = computed(() => {
+  return is_round_bead.value ? `url(${bead_round}),
+   linear-gradient(150deg,#fff0 30%, #000a 100%)` : `url(${bead_ribbed}),
+   linear-gradient(180deg,#fff0 30%, #000a 100%)`;
+});
 </script>
 
 <style>
@@ -178,13 +186,12 @@ table {
 td {
   width: 48px;
   height: 1em;
-  background-image: url(../bead.gif),
-   linear-gradient(150deg,#fff0 30%, #000a 100%);
   background-repeat: no-repeat;
   background-position: center bottom;
   background-color: #ffff3a;
   margin: 0;
   padding: 0;
+  background-image: v-bind(bead_image);
 }
 
 td.empty {

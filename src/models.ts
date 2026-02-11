@@ -11,6 +11,8 @@ const is_overflow = ref(false);
 const is_10s_complement = ref(false);
 const is_running = ref(false);
 
+const is_round_bead = ref(true);
+
 function iotaArray(length: number): number[] {
     return Array.from({ length: length }, (v, i) => (i + 1) % 9);
 }
@@ -56,5 +58,6 @@ export {
     is_overflow,
     is_10s_complement,
     is_running,
+    is_round_bead,
     resetInstruct,
 };
