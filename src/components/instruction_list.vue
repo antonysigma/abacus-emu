@@ -1,4 +1,5 @@
 <template>
+  <h4>Assembly code listing</h4>
   <ol class="instruction_view">
     <li v-for="[index, inst] of instruction_steps.entries()" :key="index">
       {{ inst }}

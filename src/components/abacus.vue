@@ -171,14 +171,18 @@ function bottomBeadClicked(i, j) {
 table {
   font-size: 27px;
   line-height: 1em;
+  border-spacing: 0px;
   border: solid 10px brown;
 }
 
 td {
   width: 48px;
   height: 1em;
-  background: url(../bead.gif) no-repeat center bottom;
-  background-color: yellow;
+  background-image: url(../bead.gif),
+   linear-gradient(150deg,#fff0 30%, #882 100%);
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-color: #ffff3a;
   margin: 0;
   padding: 0;
 }
