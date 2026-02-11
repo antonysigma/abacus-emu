@@ -1,7 +1,9 @@
 <template>
   <h1>Abacus emulator</h1>
+  <p>
   <SpeedOption />
   <PrecisionOption />
+  </p>
   <Abacus />
   <OverflowWarning />
   <Keypad />
@@ -12,6 +14,10 @@
 #app {
   width: min(50rem, 100%);
   margin: 0 auto;
+}
+
+body {
+  font-family: sans-serif;
 }
 </style>
 

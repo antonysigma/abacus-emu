@@ -1,12 +1,18 @@
 <template>
-  <fieldset>
-    <legend>Speed:</legend>
+  <div>
+    <span class="legend">Speed: </span>
     <label v-for="item in speed_settings" :key="item.name">
       <input type="radio" name="speed" :value="item.value" v-model="speed" />
       {{ item.name }}</label
     >
-  </fieldset>
+  </div>
 </template>
+
+<style>
+.legend {
+  font-weight: bold;
+}
+</style>
 
 <script setup>
 import {speed} from '../models';

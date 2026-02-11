@@ -12,7 +12,10 @@ import {instruction_steps} from '../models';
 
 <style>
 .instruction_view {
-  height: 50vh;
+  height: min(50vh, 20em);
   overflow-y: scroll;
+}
+.instruction_view li:nth-child(even) {
+  background-color: #eee;
 }
 </style>

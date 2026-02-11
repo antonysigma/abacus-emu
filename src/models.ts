@@ -1,7 +1,7 @@
 import {ref} from 'vue';
 
 const speed = ref(500);
-const precision = ref(7);
+const precision = ref(13);
 
 const a = ref('355');
 const b = ref('113');
@@ -11,7 +11,11 @@ const is_overflow = ref(false);
 const is_10s_complement = ref(false);
 const is_running = ref(false);
 
-const abacus_digits = ref([1, 2, 3, 4, 5, 6, 7]);
+function iotaArray(length: number): number[] {
+    return Array.from({ length: length }, (v, i) => (i + 1) % 9);
+}
+
+const abacus_digits = ref(iotaArray(precision.value));
 
 const instruction_steps = ref([]);
 
