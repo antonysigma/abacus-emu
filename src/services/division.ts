@@ -136,7 +136,7 @@ function divide_by(
     {
         // Bug: round off error
         const remainder = a*10-Math.floor(true_quo/10)*10*b;
-        if(j+1 < digits) // && reminder * Math.pow(10, digits) > 0)
+        if(remainder > eps && j+1 < digits)
         {
             divide_by(j+1, remainder, b, right_operand_precision, mode);
         }
@@ -144,7 +144,7 @@ function divide_by(
     else
     {
         const remainder = a*10-true_quo*b;
-        if(j+1 < digits) // && reminder * Math.pow(10, digits) > 0)
+        if(remainder > eps && j+2 < digits)
         {
             divide_by(j+1, remainder, b, right_operand_precision, mode);
         }
