@@ -67,22 +67,22 @@ function divide_by(
     }
     else if (Math.floor(a*10) > 0)
     {
-        const reminder = x*10 - quo * d;
+        const remainder = x * 10 - quo * d;
 
-        appendInstruct(divide2[d - 1][x - 1]);
+        appendInstruct(`${divide2[d - 1][x - 1]} ${x * 10} = ${d} * ${quo} + ${remainder}`);
 
         queueStep(function () {
             setNumber(j, quo);
-            setNumber(j + 1, reminder + getNumber(j+1));
+            setNumber(j + 1, remainder + getNumber(j + 1));
         });
     }
 
     const quo_diff = true_quo - quo;
-    if (true_quo > quo)
-    {
-    // Underestimated quotient
-        if(quo_diff*d <= 9) {
-            appendInstruct(divide1[d - 1][quo_diff - 1]);
+    if (quo_diff > 0) {
+        // Underestimated quotient
+        if (quo_diff === 1) {
+            appendInstruct(`${divide1[d - 1][quo_diff - 1]} ${(a * 100).toFixed(0)} = ${d} * ${
+                quo_diff} + ${(a * 100 - quo_diff * d).toFixed(0)}`);
         } else {
             appendInstruct(`Repeat "${divide1[d - 1][0]}" by ${quo_diff} times`);
         }
@@ -91,10 +91,8 @@ function divide_by(
             minus(j+1, quo_diff*d, new_mode);
             plus(j, quo_diff, new_mode);
         });
-    }
-    else if (true_quo < quo)
-    {
-    // Overestimated quotient
+    } else if (quo_diff < 0) {
+        // Overestimated quotient
         const quo_diff_flipped = quo_diff * -1;
         if (quo_diff_flipped > 1) {
             appendInstruct(`Repeat "${divide4[d - 1]}" by ${quo_diff_flipped} times`);
@@ -106,7 +104,6 @@ function divide_by(
             plus(j+1, quo_diff_flipped*d, new_mode);
             minus(j, quo_diff_flipped, new_mode);
         });
-
     }
 
     // Long division
