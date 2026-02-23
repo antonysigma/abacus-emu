@@ -1,6 +1,6 @@
 import {ref} from 'vue';
 
-const speed = ref(500);
+const speed = ref(50);
 const precision = ref(13);
 
 const a = ref('355');
