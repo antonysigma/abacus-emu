@@ -3,8 +3,8 @@ import {ref} from 'vue';
 const speed = ref(50);
 const precision = ref(13);
 
-const a = ref('355');
-const b = ref('113');
+const a = ref('22');
+const b = ref('7');
 const operator = ref('divide by');
 
 const is_overflow = ref(false);

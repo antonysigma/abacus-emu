@@ -81,8 +81,8 @@ function divide_by(
     if (quo_diff > 0) {
         // Underestimated quotient
         if (quo_diff === 1) {
-            appendInstruct(`${divide1[d - 1][quo_diff - 1]} ${(a * 100).toFixed(0)} = ${d} * ${
-                quo_diff} + ${(a * 100 - quo_diff * d).toFixed(0)}`);
+            appendInstruct(`${divide1[d - 1][quo_diff - 1]} ${(a * 100).toFixed(0)} = ${d} * (${
+                quo} + ${quo_diff}) + ${(a * 100 - true_quo * d).toFixed(0)}`);
         } else {
             appendInstruct(`Repeat "${divide1[d - 1][0]}" by ${quo_diff} times`);
         }
