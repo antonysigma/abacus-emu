@@ -1,10 +1,10 @@
-import {getNumber, is_overflow, precision, setNumber} from '../models';
+import {is_overflow, precision, setNumber} from '../models';
 
 import {plus} from './addition';
 import {appendInstruct, queueStep} from './job_queue';
 import {default_mode, mode_t} from './utils';
 
-const times1 = new Array(9);
+const times1 = Array.from({length:9});
 times1[0] = ['一一得一 1*1=1'];
 times1[1] = ['一二得二 1*2=2', '二二得四 2*2=4'];
 times1[2] = ['一三得三 1*3=3', '二三得六 2*3=6', '三三得九 3*3=9'];

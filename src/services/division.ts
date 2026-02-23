@@ -1,11 +1,11 @@
-import {getNumber, is_overflow, precision, setNumber} from '../models';
+import {getNumber, precision, setNumber} from '../models';
 
 import {plus} from './addition';
 import {minus} from './subtraction';
 import {appendInstruct, queueStep} from './job_queue';
 import {default_mode, mode_t} from './utils';
 
-const divide1 = new Array(9);
+const divide1: string[][] = Array.from({length:9});
 divide1[0] = ['逢一進一','逢二進二','逢三進三','逢四進四','逢五進五','逢六進六','逢七進七','逢八進八','逢九進九'];
 divide1[1] = ['逢二進一','逢四進二','逢六進三','逢八進四'];
 divide1[2] = ['逢三進一','逢六進二'];
@@ -16,13 +16,13 @@ divide1[6] = ['逢七進一'];
 divide1[7] = ['逢八進一'];
 divide1[8] = ['逢九進一'];
 
-const divide2 = new Array(9);
+const divide2: string[][] = Array.from({length:9});
 divide2[1] = ['二一添作五'];
 divide2[2] = ['三一三十一', '三二六十二'];
 divide2[3] = ['四一二十二','四二添作五','四三七十二'];
 divide2[4] = ['五一添作二','五二添作四','五三添作六','五四添作八'];
 divide2[5] = ['六一下加四','六二三十二','六三添作五','六四六十四','六五八十二'];
-divide2[6] = ['七一下加七','七二下加六','七三四十二','七四五十五','七五七十一','七六八十二'];
+divide2[6] = ['七一下加三','七二下加六','七三四十二','七四五十五','七五七十一','七六八十四'];
 divide2[7] = ['八一下加二','八二下加四','八三下加六','八四添作五','八五六十二','八六七十四','八七八十六'];
 divide2[8] = ['九一下加一','九二下加二','九三下加三','九四下加四','九五下加五','九六下加六','九七下加七','九八下加八'];
 
