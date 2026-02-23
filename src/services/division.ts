@@ -45,14 +45,15 @@ function divide_by(
     const new_mode= {show_stroke: false, flag_replace: mode.flag_replace};
 
     // Find the first digits
-     const x = Math.floor(a*10);
-     const d = Math.floor(b*10);
+    const eps = Math.pow(10.0, -digits);
+    const x = Math.floor(a*10 + eps);
+    const d = Math.floor(b*10 + eps);
 
     // Estimate the quotient
-     const quo = Math.floor(x*10/d);
+    const quo = Math.floor(x*10/d + eps);
 
     // Compute the true quotient
-    const true_quo = Math.floor(a*10/b);
+    const true_quo = Math.floor(a*10/b + eps);
 
     if (quo >= 10) {
         // Todo: avoid using true quotient
