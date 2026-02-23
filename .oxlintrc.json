@@ -1,0 +1,10 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "rules": {
+     "comma-dangle": ["error", "always-multiline"],
+  },
+  "env": {
+    "browser": true,
+    "es2017": true
+  },
+}
