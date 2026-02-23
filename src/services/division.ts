@@ -45,7 +45,7 @@ function divide_by(
     const new_mode= {show_stroke: false, flag_replace: mode.flag_replace};
 
     // Find the first digits
-    const eps = Math.pow(10.0, -digits);
+    const eps = Math.pow(10.0, j-digits);
     const x = Math.floor(a*10 + eps);
     const d = Math.floor(b*10 + eps);
 
