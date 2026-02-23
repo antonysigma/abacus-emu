@@ -57,7 +57,7 @@ function divide_by(
 
     if (quo >= 10) {
         // Todo: avoid using true quotient
-        const q = Math.floor(quo/10);
+        const q = Math.floor(quo / 10 + eps);
 
         appendInstruct(divide1[d - 1][q - 1]);
         queueStep(function () {
@@ -119,11 +119,12 @@ function divide_by(
         // BUG: round off error when number = 0.3999999
         for (let k=j+1; k<digits; k++)
         {
-            let r = Math.floor(y);
-            if (r > 0)
+            const r = Math.floor(y + eps);
+            if (r > 0) {
                 queueStep(function () {
                     minus(k, r, new_mode);
                 });
+            }
             y = (y-r) * 10;
         }
     }
