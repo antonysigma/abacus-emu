@@ -17,7 +17,7 @@
     "queue": "^7.0.0"
   },
   "devDependencies": {
-    "esbuild": "^0.25.12",
+    "esbuild": "^0.28.1",
     "esbuild-plugin-vue3": "^0.4.2",
     "nodejs": "^0.0.0",
     "oxlint": "^1.50.0",
